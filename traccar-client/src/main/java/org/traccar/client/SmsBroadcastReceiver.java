@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.telephony.SmsMessage;
 
 public class SmsBroadcastReceiver extends BroadcastReceiver {
     @Override
@@ -37,6 +39,20 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                     StatusActivity.addMessage("SMS not delivered");
                     break;
             }
+        }
+        else if(intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED"))
+        {
+            Bundle bundle = intent.getExtras();
+            Object messages[] = (Object[]) bundle.get("pdus");
+            SmsMessage smsMessage[] = new SmsMessage[messages.length];
+
+            for (int n = 0; n < messages.length; n++)
+                smsMessage[n] = SmsMessage.createFromPdu((byte[]) messages[n]);
+
+            String msg = "Received SMS from: " + smsMessage[0].getDisplayOriginatingAddress();
+            msg += "\nMessage: " + smsMessage[0].getDisplayMessageBody();
+
+            StatusActivity.addMessage(msg);
         }
     }
 }
