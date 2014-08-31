@@ -17,6 +17,7 @@ package org.traccar.client;
 
 import android.annotation.TargetApi;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -24,11 +25,14 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
 import android.os.BatteryManager;
+import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
+import android.telephony.SmsMessage;
 import android.util.Log;
 
 /**
@@ -80,6 +84,25 @@ public class TraccarService extends Service {
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
     }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId)
+    {
+        if(intent != null && intent.getAction() != null && intent.getAction().equals(ACTION_RECEIVE_SMS))
+        {
+            Bundle bundle = intent.getExtras();
+            String Number = (String) bundle.get("Number");
+            String Message = (String) bundle.get("Message");
+
+            String msg = "Received SMS from: " + Number;
+            msg += "\nMessage: " + Message;
+
+            StatusActivity.addMessage(msg);
+        }
+        return START_STICKY;
+    }
+
+    public static final String ACTION_RECEIVE_SMS = "TraccarService.RECEIVE_SMS_ACTION";
 
     @Override
     public IBinder onBind(Intent intent) {

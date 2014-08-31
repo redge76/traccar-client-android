@@ -2,9 +2,12 @@ package org.traccar.client;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 
@@ -46,13 +49,19 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
             Object messages[] = (Object[]) bundle.get("pdus");
             SmsMessage smsMessage[] = new SmsMessage[messages.length];
 
-            for (int n = 0; n < messages.length; n++)
-                smsMessage[n] = SmsMessage.createFromPdu((byte[]) messages[n]);
+            for (int i = 0; i < messages.length; i++)
+                smsMessage[i] = SmsMessage.createFromPdu((byte[]) messages[i]);
 
             String msg = "Received SMS from: " + smsMessage[0].getDisplayOriginatingAddress();
             msg += "\nMessage: " + smsMessage[0].getDisplayMessageBody();
 
-            StatusActivity.addMessage(msg);
+            //StatusActivity.addMessage(msg);
+
+            Intent receivedIntent = new Intent(context, TraccarService.class);
+            receivedIntent.setAction(TraccarService.ACTION_RECEIVE_SMS);
+            receivedIntent.putExtra("Number", smsMessage[0].getDisplayOriginatingAddress());
+            receivedIntent.putExtra("Message", smsMessage[0].getDisplayMessageBody());
+            context.startService(receivedIntent);
         }
     }
 }
