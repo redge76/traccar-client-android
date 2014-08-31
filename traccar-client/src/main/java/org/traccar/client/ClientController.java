@@ -37,6 +37,7 @@ public class ClientController implements Connection.ConnectionHandler {
     private Queue<String> messageQueue;
 
     private Connection connection;
+    private SmsConnection smsCon;
 
     private String address;
     private int port;
@@ -70,6 +71,8 @@ public class ClientController implements Connection.ConnectionHandler {
         IntentFilter filter = new IntentFilter();
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         context.registerReceiver(connectivityListener, filter);
+
+        smsCon = new SmsConnection(context);
     }
 
     public void stop() {
