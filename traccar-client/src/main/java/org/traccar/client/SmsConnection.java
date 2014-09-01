@@ -45,6 +45,7 @@ public class SmsConnection implements Closeable {
 
     public static final String SENT = "SMS_SENT";
     public static final String DELIVERED = "SMS_DELIVERED";
+    public static final String RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
 
     private Context context;
 

@@ -94,7 +94,7 @@ public class Protocol {
     /**
      * Format location message for SMS
      */
-    public static String createSMSLocationMessage(Location l, double battery) {
+    public static String createSMSLocationMessage(Location l, double battery, String time, String position) {
         StringBuilder s = new StringBuilder();
         //Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ENGLISH);
         //calendar.setTimeInMillis(l.getTime());
@@ -102,9 +102,12 @@ public class Protocol {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        s.append("Time: ");
+        s.append(time);
+        s.append(": ");
         s.append(sdf.format(new Date(l.getTime())));
-        s.append(" Position (lat; lon; alt; speed; bat): ");
+        s.append(" ");
+        s.append(position);
+        s.append(": ");
         s.append(l.getLatitude());
         s.append("; ");
         s.append(l.getLongitude());

@@ -42,6 +42,8 @@ public class TraccarService extends Service {
 
     public static final String LOG_TAG = "Traccar.TraccarService";
 
+    private static final String SMS_COMMAND_POS = "pos";
+
     private String id;
     private String address;
     private int port;
@@ -57,7 +59,7 @@ public class TraccarService extends Service {
     private SmsConnection smsCon;
     private boolean smsLogging;
     private String logNumber;
-    
+
     private WakeLock wakeLock;
 
     @Override
@@ -104,11 +106,11 @@ public class TraccarService extends Service {
         if(intent != null && intent.getAction() != null && intent.getAction().equals(ACTION_RECEIVE_SMS))
         {
             Bundle bundle = intent.getExtras();
-            String Number = (String) bundle.get("Number");
-            String Message = (String) bundle.get("Message");
+            String Number = (String) bundle.get(SmsBroadcastReceiver.KEY_NUMBER);
+            String Message = (String) bundle.get(SmsBroadcastReceiver.KEY_MESSAGE);
 
-            String msg = "Received SMS from: " + Number;
-            msg += "\nMessage: " + Message;
+            String msg = getString(R.string.sms_from) + ": " + Number;
+            msg += "\n+" + getString(R.string.sms_body) + ": " + Message;
 
             StatusActivity.addMessage(msg);
             handleSms(Number, Message);
@@ -120,14 +122,12 @@ public class TraccarService extends Service {
 
     private void handleSms(String Number, String Message) {
         Message = Message.toLowerCase();
-        if (Message.compareTo("pos") == 0) {
+        if (Message.compareTo(SMS_COMMAND_POS) == 0) {
             if (lastLocation == null) {
-                smsCon.send(Number, "No known position");
+                smsCon.send(Number, getString(R.string.status_location_unknown));
             } else {
-                /*smsCon.send(Number, lastLocation.getLatitude() + "; " + lastLocation.getLongitude()
-                        + "; " + lastLocation.getAltitude() + "; " + lastLocation.getSpeed()
-                        + "; " + lastLocation.getTime());*/
-                smsCon.send(Number, Protocol.createSMSLocationMessage(lastLocation, getBatteryLevel()));
+                smsCon.send(Number, Protocol.createSMSLocationMessage(lastLocation, getBatteryLevel(),
+                        getString(R.string.sms_pos_time), getString(R.string.sms_pos_values)));
             }
         }
     }
@@ -180,8 +180,8 @@ public class TraccarService extends Service {
 
                 if(smsLogging)
                 {
-                    //Protocol.createSMSLocationMessage(location, getBatteryLevel());
-                    smsCon.send(logNumber, Protocol.createSMSLocationMessage(location, getBatteryLevel()));
+                    smsCon.send(logNumber, Protocol.createSMSLocationMessage(location, getBatteryLevel(),
+                            getString(R.string.sms_pos_time), getString(R.string.sms_pos_values)));
                 }
 
                 clientController.setNewLocation(Protocol.createLocationMessage(extended, location, getBatteryLevel()));

@@ -47,5 +47,18 @@
     <string name="status_location_update">Location update</string>
     <string name="status_preference_update">Preference update</string>
     <string name="status_connectivity_change">Connectivity change</string>
+    <string name="status_location_unknown">Location unknown</string>
+
+    <string name="sms_sent">SMS sent</string>
+    <string name="sms_generic_failure">Generic failure</string>
+    <string name="sms_no_service">No service</string>
+    <string name="sms_null_pdu">Null PDU</string>
+    <string name="sms_radio_off">Radio off</string>
+    <string name="sms_delivered">SMS delivered</string>
+    <string name="sms_not_delivered">SMS not delivered</string>
+    <string name="sms_from">Received SMS from</string>
+    <string name="sms_body">Message</string>
+    <string name="sms_pos_time">Time</string>
+    <string name="sms_pos_values">Position (lat; lon; alt; speed; bat)</string>
 
 </resources>
