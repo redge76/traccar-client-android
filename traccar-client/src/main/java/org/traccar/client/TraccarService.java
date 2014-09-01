@@ -55,6 +55,7 @@ public class TraccarService extends Service {
 
     private Location lastLocation;
     private SmsConnection smsCon;
+    private boolean smsLogging = true;
     
     private WakeLock wakeLock;
 
@@ -117,9 +118,10 @@ public class TraccarService extends Service {
             if (lastLocation == null) {
                 smsCon.send(Number, "No known position");
             } else {
-                smsCon.send(Number, lastLocation.getLatitude() + "; " + lastLocation.getLongitude()
+                /*smsCon.send(Number, lastLocation.getLatitude() + "; " + lastLocation.getLongitude()
                         + "; " + lastLocation.getAltitude() + "; " + lastLocation.getSpeed()
-                        + "; " + lastLocation.getTime());
+                        + "; " + lastLocation.getTime());*/
+                smsCon.send(Number, Protocol.createSMSLocationMessage(lastLocation, getBatteryLevel()));
             }
         }
     }
@@ -167,6 +169,13 @@ public class TraccarService extends Service {
             if (location != null) {
                 lastLocation = location;
                 StatusActivity.addMessage(getString(R.string.status_location_update));
+
+                if(smsLogging)
+                {
+                    Protocol.createSMSLocationMessage(location, getBatteryLevel());
+                    //smsCon.send("5556", Protocol.createSMSLocationMessage(location, getBatteryLevel()));
+                }
+
                 clientController.setNewLocation(Protocol.createLocationMessage(extended, location, getBatteryLevel()));
             }
         }

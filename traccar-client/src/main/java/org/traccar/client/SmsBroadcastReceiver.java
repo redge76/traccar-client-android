@@ -52,11 +52,6 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
             for (int i = 0; i < messages.length; i++)
                 smsMessage[i] = SmsMessage.createFromPdu((byte[]) messages[i]);
 
-            String msg = "Received SMS from: " + smsMessage[0].getDisplayOriginatingAddress();
-            msg += "\nMessage: " + smsMessage[0].getDisplayMessageBody();
-
-            //StatusActivity.addMessage(msg);
-
             Intent receivedIntent = new Intent(context, TraccarService.class);
             receivedIntent.setAction(TraccarService.ACTION_RECEIVE_SMS);
             receivedIntent.putExtra("Number", smsMessage[0].getDisplayOriginatingAddress());

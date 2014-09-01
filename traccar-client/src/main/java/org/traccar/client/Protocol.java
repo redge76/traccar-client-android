@@ -15,7 +15,9 @@
  */
 package org.traccar.client;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -85,6 +87,36 @@ public class Protocol {
         }
         f.format("*%02x\r\n", (int) checksum);
         f.close();
+
+        return s.toString();
+    }
+
+    /**
+     * Format location message for SMS
+     */
+    public static String createSMSLocationMessage(Location l, double battery) {
+        StringBuilder s = new StringBuilder();
+        //Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ENGLISH);
+        //calendar.setTimeInMillis(l.getTime());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        s.append("Time: ");
+        s.append(sdf.format(new Date(l.getTime())));
+        s.append(" Position (lat; lon; alt; speed; bat): ");
+        s.append(l.getLatitude());
+        s.append("; ");
+        s.append(l.getLongitude());
+        s.append("; ");
+        s.append(l.getAltitude());
+        s.append("; ");
+        s.append((l.getSpeed() * 3.6));
+        s.append("; ");
+        s.append(battery);
+
+        StatusActivity.addMessage(s.toString());
+        StatusActivity.addMessage(new Integer(s.toString().length()).toString());
 
         return s.toString();
     }
