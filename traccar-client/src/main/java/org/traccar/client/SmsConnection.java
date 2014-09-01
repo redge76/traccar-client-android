@@ -42,6 +42,9 @@ public class SmsConnection {
     public static final String LOG_TAG = "Traccar.SmsConnection";
     public static final int SOCKET_TIMEOUT = 10 * 1000;
 
+    public static final String SENT = "SMS_SENT";
+    public static final String DELIVERED = "SMS_DELIVERED";
+
     private Context context;
 
     private boolean closed;
@@ -69,9 +72,6 @@ public class SmsConnection {
             @Override
             protected Boolean doInBackground(String... params) {
                 try {
-                    String SENT = "SMS_SENT";
-                    String DELIVERED = "SMS_DELIVERED";
-
                     PendingIntent sentPI = PendingIntent.getBroadcast(context, 0,
                             new Intent(SENT), 0);
 

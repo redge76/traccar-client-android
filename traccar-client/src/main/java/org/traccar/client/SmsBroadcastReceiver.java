@@ -14,7 +14,7 @@ import android.telephony.SmsMessage;
 public class SmsBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction().equals("SMS_SENT")) {
+        if(intent.getAction().equals(SmsConnection.SENT)) {
             switch (getResultCode()) {
                 case Activity.RESULT_OK:
                     StatusActivity.addMessage("SMS send");
@@ -33,7 +33,7 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                     break;
             }
         }
-        else if(intent.getAction().equals("SMS_DELIVERED")) {
+        else if(intent.getAction().equals(SmsConnection.DELIVERED)) {
             switch(getResultCode()) {
                 case Activity.RESULT_OK:
                     StatusActivity.addMessage("SMS delivered");
