@@ -25,6 +25,13 @@
         android:summary="@string/settings_interval_summary"
         android:title="@string/settings_interval_title" />
 
+    <EditTextPreference
+        android:defaultValue=""
+        android:key="number"
+        android:numeric="integer"
+        android:summary="@string/settings_number_summary"
+        android:title="@string/settings_number_title" />
+
     <ListPreference
         android:defaultValue="gps"
         android:entries="@array/settings_provider_names"
@@ -38,6 +45,12 @@
         android:key="extended"
         android:summary="@string/settings_extended_summary"
         android:title="@string/settings_extended_title" />
+
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="smslogging"
+        android:summary="@string/settings_smslogging_summary"
+        android:title="@string/settings_smslogging_title" />
 
     <SwitchPreference
         android:defaultValue="false"

@@ -11,6 +11,8 @@
     <string name="settings_port_summary">Tracking server TCP port</string>
     <string name="settings_interval_title">Frequency</string>
     <string name="settings_interval_summary">Messages interval in seconds</string>
+    <string name="settings_number_title">Number</string>
+    <string name="settings_number_summary">SMS notification number</string>
     <string name="settings_status_title">Service status</string>
     <string name="settings_status_off">Start</string>
     <string name="settings_status_on">Stop</string>
@@ -18,6 +20,8 @@
     <string name="settings_status_on_summary">Service running</string>
     <string name="settings_extended_title">Extended format</string>
     <string name="settings_extended_summary">Use new message format</string>
+    <string name="settings_smslogging_title">SMS notification</string>
+    <string name="settings_smslogging_summary">Receive position updates as SMS</string>
     <string name="settings_provider_title">Location provider</string>
     <string name="settings_provider_summary">Source of location data</string>
     <string-array name="settings_provider_names">

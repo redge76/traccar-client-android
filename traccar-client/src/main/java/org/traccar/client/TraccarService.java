@@ -55,7 +55,8 @@ public class TraccarService extends Service {
 
     private Location lastLocation;
     private SmsConnection smsCon;
-    private boolean smsLogging = true;
+    private boolean smsLogging;
+    private String logNumber;
     
     private WakeLock wakeLock;
 
@@ -65,6 +66,8 @@ public class TraccarService extends Service {
 
         lastLocation = null;
         smsCon = new SmsConnection(this);
+        smsLogging = false;
+        logNumber = "";
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
@@ -79,6 +82,9 @@ public class TraccarService extends Service {
             port = Integer.valueOf(sharedPreferences.getString(TraccarActivity.KEY_PORT, null));
             interval = Integer.valueOf(sharedPreferences.getString(TraccarActivity.KEY_INTERVAL, null));
             extended = sharedPreferences.getBoolean(TraccarActivity.KEY_EXTENDED, false);
+
+            logNumber = sharedPreferences.getString(TraccarActivity.KEY_NUMBER, null);
+            smsLogging = sharedPreferences.getBoolean(TraccarActivity.KEY_SMSLOGGING, false);
         } catch (Exception error) {
             Log.w(LOG_TAG, error);
         }
@@ -147,6 +153,8 @@ public class TraccarService extends Service {
         	clientController.stop();
         }
 
+        smsCon.close();
+
         wakeLock.release();
     }
 
@@ -172,8 +180,8 @@ public class TraccarService extends Service {
 
                 if(smsLogging)
                 {
-                    Protocol.createSMSLocationMessage(location, getBatteryLevel());
-                    //smsCon.send("5556", Protocol.createSMSLocationMessage(location, getBatteryLevel()));
+                    //Protocol.createSMSLocationMessage(location, getBatteryLevel());
+                    smsCon.send(logNumber, Protocol.createSMSLocationMessage(location, getBatteryLevel()));
                 }
 
                 clientController.setNewLocation(Protocol.createLocationMessage(extended, location, getBatteryLevel()));
@@ -220,6 +228,14 @@ public class TraccarService extends Service {
                 } else if (key.equals(TraccarActivity.KEY_EXTENDED)) {
 
                     extended = sharedPreferences.getBoolean(TraccarActivity.KEY_EXTENDED, false);
+
+                } else if (key.equals(TraccarActivity.KEY_NUMBER)) {
+
+                    logNumber = sharedPreferences.getString(TraccarActivity.KEY_NUMBER, null);
+
+                } else if (key.equals(TraccarActivity.KEY_SMSLOGGING)) {
+
+                    smsLogging = sharedPreferences.getBoolean(TraccarActivity.KEY_SMSLOGGING, false);
 
                 }
             } catch (Exception error) {
