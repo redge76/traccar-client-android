@@ -16,6 +16,7 @@
 package org.traccar.client;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -37,7 +38,7 @@ import android.widget.Toast;
  *
  * All methods should be called from UI thread only.
  */
-public class SmsConnection {
+public class SmsConnection implements Closeable {
 
     public static final String LOG_TAG = "Traccar.SmsConnection";
     public static final int SOCKET_TIMEOUT = 10 * 1000;
@@ -49,6 +50,10 @@ public class SmsConnection {
 
     private boolean closed;
     private boolean busy;
+
+    private PendingIntent sentPI;
+    private PendingIntent deliveredPI;
+    private SmsBroadcastReceiver myBroadcastReceiver;
 
     public boolean isClosed() {
         return closed;
@@ -62,6 +67,17 @@ public class SmsConnection {
         this.context = context;
         closed = false;
         busy = false;
+
+        sentPI = PendingIntent.getBroadcast(context, 0,
+                new Intent(SENT), 0);
+
+        deliveredPI = PendingIntent.getBroadcast(context, 0,
+                new Intent(DELIVERED), 0);
+
+        myBroadcastReceiver = new SmsBroadcastReceiver();
+
+        context.registerReceiver(myBroadcastReceiver, new IntentFilter(SENT));
+        context.registerReceiver(myBroadcastReceiver, new IntentFilter(DELIVERED));
     }
 
     public void send(String number, String message) {
@@ -72,15 +88,6 @@ public class SmsConnection {
             @Override
             protected Boolean doInBackground(String... params) {
                 try {
-                    PendingIntent sentPI = PendingIntent.getBroadcast(context, 0,
-                            new Intent(SENT), 0);
-
-                    PendingIntent deliveredPI = PendingIntent.getBroadcast(context, 0,
-                            new Intent(DELIVERED), 0);
-
-                    context.registerReceiver(new SmsBroadcastReceiver(), new IntentFilter(SENT));
-                    context.registerReceiver(new SmsBroadcastReceiver(), new IntentFilter(DELIVERED));
-
                     SmsManager sms = SmsManager.getDefault();
                     sms.sendTextMessage(params[0], null, params[1], sentPI, deliveredPI);
                     return true;
@@ -108,4 +115,9 @@ public class SmsConnection {
 
     }
 
+    @Override
+    public void close() {
+        closed = true;
+        context.unregisterReceiver(myBroadcastReceiver);
+    }
 }
