@@ -52,12 +52,18 @@ public class TraccarService extends Service {
     private SharedPreferences sharedPreferences;
     private ClientController clientController;
     private PositionProvider positionProvider;
+
+    private Location lastLocation;
+    private SmsConnection smsCon;
     
     private WakeLock wakeLock;
 
     @Override
     public void onCreate() {
         StatusActivity.addMessage(getString(R.string.status_service_create));
+
+        lastLocation = null;
+        smsCon = new SmsConnection(this);
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
@@ -98,11 +104,25 @@ public class TraccarService extends Service {
             msg += "\nMessage: " + Message;
 
             StatusActivity.addMessage(msg);
+            handleSms(Number, Message);
         }
         return START_STICKY;
     }
 
     public static final String ACTION_RECEIVE_SMS = "TraccarService.RECEIVE_SMS_ACTION";
+
+    private void handleSms(String Number, String Message) {
+        Message = Message.toLowerCase();
+        if (Message.compareTo("pos") == 0) {
+            if (lastLocation == null) {
+                smsCon.send(Number, "No known position");
+            } else {
+                smsCon.send(Number, lastLocation.getLatitude() + "; " + lastLocation.getLongitude()
+                        + "; " + lastLocation.getAltitude() + "; " + lastLocation.getSpeed()
+                        + "; " + lastLocation.getTime());
+            }
+        }
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -145,6 +165,7 @@ public class TraccarService extends Service {
         @Override
         public void onPositionUpdate(Location location) {
             if (location != null) {
+                lastLocation = location;
                 StatusActivity.addMessage(getString(R.string.status_location_update));
                 clientController.setNewLocation(Protocol.createLocationMessage(extended, location, getBatteryLevel()));
             }
