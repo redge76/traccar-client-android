@@ -43,6 +43,8 @@ public class TraccarService extends Service {
     public static final String LOG_TAG = "Traccar.TraccarService";
 
     private static final String SMS_COMMAND_POS = "pos";
+    private static final String SMS_COMMAND_ENABLE = "enable";
+    private static final String SMS_COMMAND_DISABLE = "disable";
 
     private String id;
     private String address;
@@ -124,11 +126,22 @@ public class TraccarService extends Service {
         Message = Message.toLowerCase();
         if (Message.compareTo(SMS_COMMAND_POS) == 0) {
             if (lastLocation == null) {
+
                 smsCon.send(Number, getString(R.string.status_location_unknown));
+
             } else {
+
                 smsCon.send(Number, Protocol.createSMSLocationMessage(lastLocation, getBatteryLevel(),
                         getString(R.string.sms_pos_time), getString(R.string.sms_pos_values)));
             }
+        } else if (Message.compareTo(SMS_COMMAND_ENABLE) == 0) {
+
+            smsLogging = true;
+
+        } else if (Message.compareTo(SMS_COMMAND_DISABLE) == 0) {
+
+            smsLogging = false;
+
         }
     }
 
