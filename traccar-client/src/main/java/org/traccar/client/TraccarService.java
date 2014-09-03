@@ -45,6 +45,11 @@ public class TraccarService extends Service {
     private static final String SMS_COMMAND_POS = "pos";
     private static final String SMS_COMMAND_ENABLE = "enable";
     private static final String SMS_COMMAND_DISABLE = "disable";
+    private static final String SMS_COMMAND_SERVER = "server";
+    private static final String SMS_COMMAND_PORT = "port";
+    private static final String SMS_COMMAND_FREQUENCY = "frequency";
+    private static final String SMS_COMMAND_FREQ = "freq";
+    private static final String SMS_COMMAND_NUMBER = "number";
 
     private String id;
     private String address;
@@ -123,7 +128,20 @@ public class TraccarService extends Service {
     public static final String ACTION_RECEIVE_SMS = "TraccarService.RECEIVE_SMS_ACTION";
 
     private void handleSms(String Number, String Message) {
+        SharedPreferences.Editor prefEditor;
         Message = Message.toLowerCase();
+        String param = null;
+        int index;
+
+        index = Message.indexOf(' ');
+        if(index != -1) {
+            param = Message.substring(index + 1);
+            Message = Message.substring(0, index);
+        }
+
+
+        prefEditor = sharedPreferences.edit();
+
         if (Message.compareTo(SMS_COMMAND_POS) == 0) {
             if (lastLocation == null) {
 
@@ -136,13 +154,35 @@ public class TraccarService extends Service {
             }
         } else if (Message.compareTo(SMS_COMMAND_ENABLE) == 0) {
 
-            smsLogging = true;
+            //smsLogging = true;
+            prefEditor.putBoolean(TraccarActivity.KEY_SMSLOGGING, true);
+
 
         } else if (Message.compareTo(SMS_COMMAND_DISABLE) == 0) {
 
-            smsLogging = false;
+            //smsLogging = false;
+            prefEditor.putBoolean(TraccarActivity.KEY_SMSLOGGING, false);
+
+        } else if (Message.compareTo(SMS_COMMAND_SERVER) == 0 && param != null) {
+
+            prefEditor.putString(TraccarActivity.KEY_ADDRESS, param);
+
+        } else if (Message.compareTo(SMS_COMMAND_PORT) == 0&& param != null) {
+
+            prefEditor.putString(TraccarActivity.KEY_PORT, Protocol.makeNumeric(param));
+
+        } else if ((Message.compareTo(SMS_COMMAND_FREQUENCY) == 0
+                        || Message.compareTo(SMS_COMMAND_FREQ) == 0) && param != null) {
+
+            prefEditor.putString(TraccarActivity.KEY_INTERVAL, Protocol.makeNumeric(param));
+
+        } else if (Message.compareTo(SMS_COMMAND_NUMBER) == 0&& param != null) {
+
+            prefEditor.putString(TraccarActivity.KEY_NUMBER, Protocol.makeNumeric(param));
 
         }
+
+        prefEditor.apply();
     }
 
     @Override
