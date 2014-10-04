@@ -83,6 +83,9 @@ public class TraccarActivity extends PreferenceActivity {
             } else if (key.equals(KEY_ID)) {
                 findPreference(KEY_ID).setSummary(sharedPreferences.getString(KEY_ID, null));
             }
+
+            getPreferenceScreen().removeAll();
+            addPreferencesFromResource(R.xml.preferences);
         }
     };
 
