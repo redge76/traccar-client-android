@@ -50,6 +50,7 @@ public class TraccarService extends Service {
     private static final String SMS_COMMAND_FREQUENCY = "frequency";
     private static final String SMS_COMMAND_FREQ = "freq";
     private static final String SMS_COMMAND_NUMBER = "number";
+    private static final String SMS_COMMAND_BATTERY = "battery";
 
     private String id;
     private String address;
@@ -205,9 +206,15 @@ public class TraccarService extends Service {
 
             prefEditor.putString(TraccarActivity.KEY_INTERVAL, Protocol.makeNumeric(param));
 
-        } else if (Message.compareTo(SMS_COMMAND_NUMBER) == 0&& param != null) {
+        } else if (Message.compareTo(SMS_COMMAND_NUMBER) == 0 && param != null) {
 
             prefEditor.putString(TraccarActivity.KEY_NUMBER, Protocol.makeNumeric(param));
+
+        } else if (Message.compareTo(SMS_COMMAND_BATTERY) == 0 && param != null) {
+            Integer level = Integer.parseInt(Protocol.makeNumeric(param));
+            level = Math.min(level, 100);
+            level = Math.max(level, 0);
+            prefEditor.putString(TraccarActivity.KEY_BATTERY, level.toString());
 
         }
 
