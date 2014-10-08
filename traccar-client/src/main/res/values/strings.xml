@@ -13,6 +13,8 @@
     <string name="settings_interval_summary">Messages interval in seconds</string>
     <string name="settings_number_title">Number</string>
     <string name="settings_number_summary">SMS notification number</string>
+    <string name="settings_battery_title">Battery warning</string>
+    <string name="settings_battery_summary">Receive notification of low battery level</string>
     <string name="settings_status_title">Service status</string>
     <string name="settings_status_off">Start</string>
     <string name="settings_status_on">Stop</string>
@@ -60,5 +62,7 @@
     <string name="sms_body">Message</string>
     <string name="sms_pos_time">Time</string>
     <string name="sms_pos_values">Position (lat; lon; alt; speed; bat)</string>
+    <string name="sms_bat_warning">Warning! Battery level below</string>
+    <string name="sms_bat_percent">percent.</string>
 
 </resources>

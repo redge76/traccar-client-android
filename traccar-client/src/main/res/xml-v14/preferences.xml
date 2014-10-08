@@ -32,6 +32,13 @@
         android:summary="@string/settings_number_summary"
         android:title="@string/settings_number_title" />
 
+    <EditTextPreference
+        android:defaultValue="100"
+        android:key="battery"
+        android:numeric="integer"
+        android:summary="@string/settings_battery_summary"
+        android:title="@string/settings_battery_title" />
+
     <ListPreference
         android:defaultValue="gps"
         android:entries="@array/settings_provider_names"

@@ -42,6 +42,7 @@ public class TraccarActivity extends PreferenceActivity {
     public static final String KEY_PORT = "port";
     public static final String KEY_INTERVAL = "interval";
     public static final String KEY_NUMBER = "number";
+    public static final String KEY_BATTERY = "battery";
     public static final String KEY_PROVIDER = "provider";
     public static final String KEY_EXTENDED = "extended";
     public static final String KEY_SMSLOGGING = "smslogging";

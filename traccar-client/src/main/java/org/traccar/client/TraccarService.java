@@ -66,6 +66,9 @@ public class TraccarService extends Service {
     private SmsConnection smsCon;
     private boolean smsLogging;
     private String logNumber;
+    private int lowBatteryWarning;
+    private BatteryBroadcastReceiver myBatteryBroadcastReceiver;
+    private boolean lowBatteryWarningSent;
 
     private WakeLock wakeLock;
 
@@ -77,6 +80,8 @@ public class TraccarService extends Service {
         smsCon = new SmsConnection(this);
         smsLogging = false;
         logNumber = "";
+        lowBatteryWarning = 100;
+        lowBatteryWarningSent = false;
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
@@ -94,6 +99,11 @@ public class TraccarService extends Service {
 
             logNumber = sharedPreferences.getString(TraccarActivity.KEY_NUMBER, null);
             smsLogging = sharedPreferences.getBoolean(TraccarActivity.KEY_SMSLOGGING, false);
+            lowBatteryWarning = Integer.valueOf(sharedPreferences.getString(TraccarActivity.KEY_BATTERY, null));
+            if(lowBatteryWarning <= (int) getBatteryLevel()) {
+                lowBatteryWarningSent = true;
+            } else lowBatteryWarningSent = false;
+
         } catch (Exception error) {
             Log.w(LOG_TAG, error);
         }
@@ -105,22 +115,41 @@ public class TraccarService extends Service {
         positionProvider.startUpdates();
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+
+        myBatteryBroadcastReceiver = new BatteryBroadcastReceiver();
+        registerReceiver(myBatteryBroadcastReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
-        if(intent != null && intent.getAction() != null && intent.getAction().equals(ACTION_RECEIVE_SMS))
+        if(intent != null && intent.getAction() != null)
         {
-            Bundle bundle = intent.getExtras();
-            String Number = (String) bundle.get(SmsBroadcastReceiver.KEY_NUMBER);
-            String Message = (String) bundle.get(SmsBroadcastReceiver.KEY_MESSAGE);
+            if(intent.getAction().equals(ACTION_RECEIVE_SMS)) {
+                Bundle bundle = intent.getExtras();
+                String Number = (String) bundle.get(SmsBroadcastReceiver.KEY_NUMBER);
+                String Message = (String) bundle.get(SmsBroadcastReceiver.KEY_MESSAGE);
 
-            String msg = getString(R.string.sms_from) + ": " + Number;
-            msg += "\n+" + getString(R.string.sms_body) + ": " + Message;
+                String msg = getString(R.string.sms_from) + ": " + Number;
+                msg += "\n+" + getString(R.string.sms_body) + ": " + Message;
 
-            StatusActivity.addMessage(msg);
-            handleSms(Number, Message);
+                StatusActivity.addMessage(msg);
+                handleSms(Number, Message);
+            } else if(intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
+                int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+                int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 1);
+                int battery = (int) ((level * 100.0) / scale);
+
+                if(lowBatteryWarning > 0 && lowBatteryWarning < 100 && battery <= lowBatteryWarning)
+                {
+                    if(!lowBatteryWarningSent) {
+                        smsCon.send(logNumber, getString(R.string.sms_bat_warning) + " " +
+                                + battery + " " + getString(R.string.sms_bat_percent));
+                    }
+                    lowBatteryWarningSent = true;
+                }
+                else lowBatteryWarningSent = false;
+            }
         }
         return START_STICKY;
     }
@@ -206,6 +235,8 @@ public class TraccarService extends Service {
         	clientController.stop();
         }
 
+        unregisterReceiver(myBatteryBroadcastReceiver);
+
         smsCon.close();
 
         wakeLock.release();
@@ -285,6 +316,13 @@ public class TraccarService extends Service {
                 } else if (key.equals(TraccarActivity.KEY_NUMBER)) {
 
                     logNumber = sharedPreferences.getString(TraccarActivity.KEY_NUMBER, null);
+
+                } else if (key.equals(TraccarActivity.KEY_BATTERY)) {
+
+                    lowBatteryWarning = Integer.valueOf(sharedPreferences.getString(TraccarActivity.KEY_BATTERY, null));
+                    if(lowBatteryWarning <= getBatteryLevel()) {
+                        lowBatteryWarningSent = true;
+                    } else lowBatteryWarningSent = false;
 
                 } else if (key.equals(TraccarActivity.KEY_SMSLOGGING)) {
 
