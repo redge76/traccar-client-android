@@ -129,7 +129,7 @@ public class ClientController implements Connection.ConnectionHandler {
     @Override
     public void onSent(boolean result) {
         if (result) {
-            if (!messageQueue.isEmpty()) {
+            while (!messageQueue.isEmpty()) {
                 connection.send(messageQueue.poll());
             }
         } else {
