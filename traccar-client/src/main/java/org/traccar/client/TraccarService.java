@@ -86,7 +86,7 @@ public class TraccarService extends Service {
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
-        wakeLock.acquire();
+        //wakeLock.acquire();
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -246,7 +246,7 @@ public class TraccarService extends Service {
 
         smsCon.close();
 
-        wakeLock.release();
+        //wakeLock.release();
     }
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
