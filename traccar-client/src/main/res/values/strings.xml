@@ -28,15 +28,22 @@
             <string name="settings_extended_title">Extended format</string>
             <string name="settings_extended_summary">Use new message format</string>
 
+            <string name="settings_tracking_inet_tracking_title">Internet tracking</string>
+            <string name="settings_tracking_inet_tracking_summary">Receive position updates via internet</string>
+
         <string name="pref_screen_tracking_sms">SMS tracking</string>
 
-            <string name="settings_number_title">Number</string>
-            <string name="settings_number_summary">SMS notification number</string>
-            <string name="settings_smslogging_title">SMS notification</string>
-            <string name="settings_smslogging_summary">Receive position updates as SMS</string>
+            <string name="settings_tracking_sms_number_title">Tracking number</string>
+            <string name="settings_tracking_sms_number_summary">SMS tracking number</string>
+            <string name="settings_tracking_sms_tracking_title">SMS tracking</string>
+            <string name="settings_tracking_sms_tracking_summary">Receive position updates as SMS</string>
 
     <string name="pref_cat_notifications">SMS notifications</string>
 
+        <string name="settings_notification_sms_number_title">Notification number</string>
+        <string name="settings_notification_sms_number_summary">SMS notification number</string>
+        <string name="settings_notification_sms_notification_title">SMS notifications</string>
+        <string name="settings_notification_sms_notification_summary">Receive notifications as SMS</string>
         <string name="settings_battery_title">Battery warning</string>
         <string name="settings_battery_summary">Receive notification of low battery level</string>
 

@@ -17,22 +17,15 @@ package org.traccar.client;
 
 import android.annotation.TargetApi;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
-import android.os.BatteryManager;
-import android.os.Binder;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.PowerManager;
+import android.os.*;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
-import android.telephony.SmsMessage;
 import android.util.Log;
 
 /**
@@ -65,8 +58,15 @@ public class TraccarService extends Service {
 
     private Location lastLocation;
     private SmsConnection smsCon;
-    private boolean smsLogging;
-    private String logNumber;
+
+    private boolean smsTracking;
+    private String smsTrackingNumber;
+
+    private boolean smsNotification;
+    private String smsNotificationNumber;
+
+    private boolean inetTracking;
+
     private int lowBatteryWarning;
     private BatteryBroadcastReceiver myBatteryBroadcastReceiver;
     private boolean lowBatteryWarningSent;
@@ -79,8 +79,15 @@ public class TraccarService extends Service {
 
         lastLocation = null;
         smsCon = new SmsConnection(this);
-        smsLogging = false;
-        logNumber = "";
+
+        inetTracking = true;
+
+        smsTracking = false;
+        smsTrackingNumber = "";
+
+        smsNotification = false;
+        smsNotificationNumber = "";
+
         lowBatteryWarning = 100;
         lowBatteryWarningSent = false;
 
@@ -98,10 +105,15 @@ public class TraccarService extends Service {
             interval = Integer.valueOf(sharedPreferences.getString(TraccarActivity.KEY_INTERVAL, null));
             extended = sharedPreferences.getBoolean(TraccarActivity.KEY_EXTENDED, false);
 
-            logNumber = sharedPreferences.getString(TraccarActivity.KEY_NUMBER, null);
-            smsLogging = sharedPreferences.getBoolean(TraccarActivity.KEY_SMSLOGGING, false);
+            inetTracking = sharedPreferences.getBoolean(TraccarActivity.KEY_TRACKING_INET, true);
+            smsTracking = sharedPreferences.getBoolean(TraccarActivity.KEY_TRACKING_SMS, false);
+            smsTrackingNumber = sharedPreferences.getString(TraccarActivity.KEY_TRACKING_SMS_NUMBER, null);
+
+            smsNotification = sharedPreferences.getBoolean(TraccarActivity.KEY_NOTIFICATION_SMS, false);
+            smsNotificationNumber = sharedPreferences.getString(TraccarActivity.KEY_NOTIFICATION_SMS_NUMBER, null);
+
             lowBatteryWarning = Integer.valueOf(sharedPreferences.getString(TraccarActivity.KEY_BATTERY, null));
-            if(lowBatteryWarning <= (int) getBatteryLevel()) {
+            if (lowBatteryWarning <= (int) getBatteryLevel()) {
                 lowBatteryWarningSent = true;
             } else lowBatteryWarningSent = false;
 
@@ -122,11 +134,9 @@ public class TraccarService extends Service {
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
-    {
-        if(intent != null && intent.getAction() != null)
-        {
-            if(intent.getAction().equals(ACTION_RECEIVE_SMS)) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.getAction() != null) {
+            if (intent.getAction().equals(ACTION_RECEIVE_SMS)) {
                 Bundle bundle = intent.getExtras();
                 String Number = (String) bundle.get(SmsBroadcastReceiver.KEY_NUMBER);
                 String Message = (String) bundle.get(SmsBroadcastReceiver.KEY_MESSAGE);
@@ -136,20 +146,18 @@ public class TraccarService extends Service {
 
                 StatusActivity.addMessage(msg);
                 handleSms(Number, Message);
-            } else if(intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
+            } else if (intent.getAction().equals(Intent.ACTION_BATTERY_CHANGED)) {
                 int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
                 int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 1);
                 int battery = (int) ((level * 100.0) / scale);
 
-                if(lowBatteryWarning > 0 && lowBatteryWarning < 100 && battery <= lowBatteryWarning)
-                {
-                    if(!lowBatteryWarningSent) {
-                        smsCon.send(logNumber, getString(R.string.sms_bat_warning) + " " +
-                                + battery + " " + getString(R.string.sms_bat_percent));
+                if (lowBatteryWarning > 0 && lowBatteryWarning < 100 && battery <= lowBatteryWarning) {
+                    if (!lowBatteryWarningSent) {
+                        smsCon.send(smsNotificationNumber, getString(R.string.sms_bat_warning) + " " +
+                                +battery + " " + getString(R.string.sms_bat_percent));
                     }
                     lowBatteryWarningSent = true;
-                }
-                else lowBatteryWarningSent = false;
+                } else lowBatteryWarningSent = false;
             }
         }
         return START_STICKY;
@@ -164,7 +172,7 @@ public class TraccarService extends Service {
         int index;
 
         index = Message.indexOf(' ');
-        if(index != -1) {
+        if (index != -1) {
             param = Message.substring(index + 1);
             Message = Message.substring(0, index);
         }
@@ -185,30 +193,30 @@ public class TraccarService extends Service {
         } else if (Message.compareTo(SMS_COMMAND_ENABLE) == 0) {
 
             //smsLogging = true;
-            prefEditor.putBoolean(TraccarActivity.KEY_SMSLOGGING, true);
+            prefEditor.putBoolean(TraccarActivity.KEY_TRACKING_SMS, true);
 
 
         } else if (Message.compareTo(SMS_COMMAND_DISABLE) == 0) {
 
             //smsLogging = false;
-            prefEditor.putBoolean(TraccarActivity.KEY_SMSLOGGING, false);
+            prefEditor.putBoolean(TraccarActivity.KEY_TRACKING_SMS, false);
 
         } else if (Message.compareTo(SMS_COMMAND_SERVER) == 0 && param != null) {
 
             prefEditor.putString(TraccarActivity.KEY_ADDRESS, param);
 
-        } else if (Message.compareTo(SMS_COMMAND_PORT) == 0&& param != null) {
+        } else if (Message.compareTo(SMS_COMMAND_PORT) == 0 && param != null) {
 
             prefEditor.putString(TraccarActivity.KEY_PORT, Protocol.makeNumeric(param));
 
         } else if ((Message.compareTo(SMS_COMMAND_FREQUENCY) == 0
-                        || Message.compareTo(SMS_COMMAND_FREQ) == 0) && param != null) {
+                || Message.compareTo(SMS_COMMAND_FREQ) == 0) && param != null) {
 
             prefEditor.putString(TraccarActivity.KEY_INTERVAL, Protocol.makeNumeric(param));
 
         } else if (Message.compareTo(SMS_COMMAND_NUMBER) == 0 && param != null) {
 
-            prefEditor.putString(TraccarActivity.KEY_NUMBER, Protocol.makeNumeric(param));
+            prefEditor.putString(TraccarActivity.KEY_TRACKING_SMS_NUMBER, Protocol.makeNumeric(param));
 
         } else if (Message.compareTo(SMS_COMMAND_BATTERY) == 0 && param != null) {
             Integer level = Integer.parseInt(Protocol.makeNumeric(param));
@@ -231,15 +239,15 @@ public class TraccarService extends Service {
         StatusActivity.addMessage(getString(R.string.status_service_destroy));
 
         if (sharedPreferences != null) {
-        	sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
         }
 
         if (positionProvider != null) {
-        	positionProvider.stopUpdates();
+            positionProvider.stopUpdates();
         }
 
         if (clientController != null) {
-        	clientController.stop();
+            clientController.stop();
         }
 
         unregisterReceiver(myBatteryBroadcastReceiver);
@@ -269,13 +277,14 @@ public class TraccarService extends Service {
                 lastLocation = location;
                 StatusActivity.addMessage(getString(R.string.status_location_update));
 
-                if(smsLogging)
-                {
-                    smsCon.send(logNumber, Protocol.createSMSLocationMessage(location, getBatteryLevel(),
+                if (smsTracking) {
+                    smsCon.send(smsTrackingNumber, Protocol.createSMSLocationMessage(location, getBatteryLevel(),
                             getString(R.string.sms_pos_time), getString(R.string.sms_pos_values)));
                 }
 
-                clientController.setNewLocation(Protocol.createLocationMessage(extended, location, getBatteryLevel()));
+                if (inetTracking) {
+                    clientController.setNewLocation(Protocol.createLocationMessage(extended, location, getBatteryLevel()));
+                }
             }
         }
 
@@ -287,54 +296,50 @@ public class TraccarService extends Service {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             StatusActivity.addMessage(getString(R.string.status_preference_update));
             try {
-                if (key.equals(TraccarActivity.KEY_ADDRESS)) {
-
-                    address = sharedPreferences.getString(TraccarActivity.KEY_ADDRESS, null);
-                    clientController.setNewServer(address, port);
-
-                } else if (key.equals(TraccarActivity.KEY_PORT)) {
-
-                    port = Integer.valueOf(sharedPreferences.getString(TraccarActivity.KEY_PORT, null));
-                    clientController.setNewServer(address, port);
-
+                //Tracking
+                if (key.equals(TraccarActivity.KEY_ID)) {
+                    id = sharedPreferences.getString(TraccarActivity.KEY_ID, null);
+                    clientController.setNewLogin(Protocol.createLoginMessage(id));
                 } else if (key.equals(TraccarActivity.KEY_INTERVAL)) {
-
                     interval = Integer.valueOf(sharedPreferences.getString(TraccarActivity.KEY_INTERVAL, null));
                     positionProvider.stopUpdates();
                     positionProvider = new PositionProvider(TraccarService.this, provider, interval * 1000, positionListener);
                     positionProvider.startUpdates();
-
-                } else if (key.equals(TraccarActivity.KEY_ID)) {
-
-                    id = sharedPreferences.getString(TraccarActivity.KEY_ID, null);
-                    clientController.setNewLogin(Protocol.createLoginMessage(id));
-
                 } else if (key.equals(TraccarActivity.KEY_PROVIDER)) {
-
                     provider = sharedPreferences.getString(TraccarActivity.KEY_PROVIDER, null);
                     positionProvider.stopUpdates();
                     positionProvider = new PositionProvider(TraccarService.this, provider, interval * 1000, positionListener);
                     positionProvider.startUpdates();
-
+                }
+                //Backends
+                //Inet
+                else if (key.equals(TraccarActivity.KEY_ADDRESS)) {
+                    address = sharedPreferences.getString(TraccarActivity.KEY_ADDRESS, null);
+                    clientController.setNewServer(address, port);
+                } else if (key.equals(TraccarActivity.KEY_PORT)) {
+                    port = Integer.valueOf(sharedPreferences.getString(TraccarActivity.KEY_PORT, null));
+                    clientController.setNewServer(address, port);
                 } else if (key.equals(TraccarActivity.KEY_EXTENDED)) {
-
                     extended = sharedPreferences.getBoolean(TraccarActivity.KEY_EXTENDED, false);
-
-                } else if (key.equals(TraccarActivity.KEY_NUMBER)) {
-
-                    logNumber = sharedPreferences.getString(TraccarActivity.KEY_NUMBER, null);
-
+                } else if (key.equals(TraccarActivity.KEY_TRACKING_INET)) {
+                    inetTracking = sharedPreferences.getBoolean(TraccarActivity.KEY_TRACKING_INET, true);
+                }
+                //Sms
+                else if (key.equals(TraccarActivity.KEY_TRACKING_SMS)) {
+                    smsTracking = sharedPreferences.getBoolean(TraccarActivity.KEY_TRACKING_SMS, false);
+                } else if (key.equals(TraccarActivity.KEY_TRACKING_SMS_NUMBER)) {
+                    smsTrackingNumber = sharedPreferences.getString(TraccarActivity.KEY_TRACKING_SMS_NUMBER, null);
+                }
+                //Notifications
+                else if (key.equals(TraccarActivity.KEY_NOTIFICATION_SMS)) {
+                    smsNotification = sharedPreferences.getBoolean(TraccarActivity.KEY_NOTIFICATION_SMS, false);
+                } else if (key.equals(TraccarActivity.KEY_NOTIFICATION_SMS_NUMBER)) {
+                    smsNotificationNumber = sharedPreferences.getString(TraccarActivity.KEY_NOTIFICATION_SMS_NUMBER, null);
                 } else if (key.equals(TraccarActivity.KEY_BATTERY)) {
-
                     lowBatteryWarning = Integer.valueOf(sharedPreferences.getString(TraccarActivity.KEY_BATTERY, null));
-                    if(lowBatteryWarning <= getBatteryLevel()) {
+                    if (lowBatteryWarning <= getBatteryLevel()) {
                         lowBatteryWarningSent = true;
                     } else lowBatteryWarningSent = false;
-
-                } else if (key.equals(TraccarActivity.KEY_SMSLOGGING)) {
-
-                    smsLogging = sharedPreferences.getBoolean(TraccarActivity.KEY_SMSLOGGING, false);
-
                 }
             } catch (Exception error) {
                 Log.w(LOG_TAG, error);
