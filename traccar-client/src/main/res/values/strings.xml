@@ -4,34 +4,50 @@
     <string name="app_name">Traccar Client</string>
     <string name="app_logo">Traccar</string>
 
-    <string name="settings_id_title">Device identifier</string>
-    <string name="settings_address_title">Server address</string>
-    <string name="settings_address_summary">Domain name or IP address</string>
-    <string name="settings_port_title">Server port</string>
-    <string name="settings_port_summary">Tracking server TCP port</string>
-    <string name="settings_interval_title">Frequency</string>
-    <string name="settings_interval_summary">Messages interval in seconds</string>
-    <string name="settings_number_title">Number</string>
-    <string name="settings_number_summary">SMS notification number</string>
-    <string name="settings_battery_title">Battery warning</string>
-    <string name="settings_battery_summary">Receive notification of low battery level</string>
-    <string name="settings_status_title">Service status</string>
-    <string name="settings_status_off">Start</string>
-    <string name="settings_status_on">Stop</string>
-    <string name="settings_status_off_summary">Service stopped</string>
-    <string name="settings_status_on_summary">Service running</string>
-    <string name="settings_extended_title">Extended format</string>
-    <string name="settings_extended_summary">Use new message format</string>
-    <string name="settings_smslogging_title">SMS notification</string>
-    <string name="settings_smslogging_summary">Receive position updates as SMS</string>
-    <string name="settings_provider_title">Location provider</string>
-    <string name="settings_provider_summary">Source of location data</string>
-    <string-array name="settings_provider_names">
-        <item>GPS provider</item>
-        <item>Network provider</item>
-        <item>Mixed provider</item>
-    </string-array>
-    
+    <string name="pref_cat_tracking">General tracking options</string>
+
+        <string name="settings_id_title">Device identifier</string>
+        <string name="settings_interval_title">Frequency</string>
+        <string name="settings_interval_summary">Messages interval in seconds</string>
+        <string name="settings_provider_title">Location provider</string>
+        <string name="settings_provider_summary">Source of location data</string>
+
+        <string-array name="settings_provider_names">
+            <item>GPS provider</item>
+            <item>Network provider</item>
+            <item>Mixed provider</item>
+        </string-array>
+
+    <string name="pref_cat_tracking_backends">Tracking backends</string>
+        <string name="pref_screen_tracking_inet">Internet tracking</string>
+
+            <string name="settings_address_title">Server address</string>
+            <string name="settings_address_summary">Domain name or IP address</string>
+            <string name="settings_port_title">Server port</string>
+            <string name="settings_port_summary">Tracking server TCP port</string>
+            <string name="settings_extended_title">Extended format</string>
+            <string name="settings_extended_summary">Use new message format</string>
+
+        <string name="pref_screen_tracking_sms">SMS tracking</string>
+
+            <string name="settings_number_title">Number</string>
+            <string name="settings_number_summary">SMS notification number</string>
+            <string name="settings_smslogging_title">SMS notification</string>
+            <string name="settings_smslogging_summary">Receive position updates as SMS</string>
+
+    <string name="pref_cat_notifications">SMS notifications</string>
+
+        <string name="settings_battery_title">Battery warning</string>
+        <string name="settings_battery_summary">Receive notification of low battery level</string>
+
+    <string name="pref_cat_service">Service operation</string>
+
+        <string name="settings_status_title">Service status</string>
+        <string name="settings_status_off">Start</string>
+        <string name="settings_status_on">Stop</string>
+        <string name="settings_status_off_summary">Service stopped</string>
+        <string name="settings_status_on_summary">Service running</string>
+
     <string name="menu_status">Status</string>
     <string name="menu_about">About</string>
     <string name="menu_clear">Clear</string>
