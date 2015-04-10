@@ -19,7 +19,7 @@
         </string-array>
 
     <string name="pref_cat_tracking_backends">Tracking backends</string>
-        <string name="pref_screen_tracking_inet">Internet tracking</string>
+        <string name="pref_screen_tracking_inet">Internet</string>
 
             <string name="settings_address_title">Server address</string>
             <string name="settings_address_summary">Domain name or IP address</string>
@@ -31,7 +31,7 @@
             <string name="settings_tracking_inet_tracking_title">Internet tracking</string>
             <string name="settings_tracking_inet_tracking_summary">Receive position updates via internet</string>
 
-        <string name="pref_screen_tracking_sms">SMS tracking</string>
+        <string name="pref_screen_tracking_sms">SMS</string>
 
             <string name="settings_tracking_sms_number_title">Tracking number</string>
             <string name="settings_tracking_sms_number_summary">SMS tracking number</string>
