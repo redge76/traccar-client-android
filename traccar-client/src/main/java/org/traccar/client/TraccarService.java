@@ -151,13 +151,15 @@ public class TraccarService extends Service {
                 int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 1);
                 int battery = (int) ((level * 100.0) / scale);
 
-                if (lowBatteryWarning > 0 && lowBatteryWarning < 100 && battery <= lowBatteryWarning) {
-                    if (!lowBatteryWarningSent) {
-                        smsCon.send(smsNotificationNumber, getString(R.string.sms_bat_warning) + " " +
-                                +battery + " " + getString(R.string.sms_bat_percent));
-                    }
-                    lowBatteryWarningSent = true;
-                } else lowBatteryWarningSent = false;
+                if(smsNotification) {
+                    if (lowBatteryWarning > 0 && lowBatteryWarning < 100 && battery <= lowBatteryWarning) {
+                        if (!lowBatteryWarningSent) {
+                            smsCon.send(smsNotificationNumber, getString(R.string.sms_bat_warning) + " " +
+                                    +battery + " " + getString(R.string.sms_bat_percent));
+                        }
+                        lowBatteryWarningSent = true;
+                    } else lowBatteryWarningSent = false;
+                }
             }
         }
         return START_STICKY;
