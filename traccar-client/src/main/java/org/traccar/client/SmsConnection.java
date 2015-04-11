@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 - 2013 Anton Tananaev (anton.tananaev@gmail.com)
+ * Copyright 2012 - 2015 Armagetron
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import android.widget.Toast;
 public class SmsConnection implements Closeable {
 
     public static final String LOG_TAG = "Traccar.SmsConnection";
-    public static final int SOCKET_TIMEOUT = 10 * 1000;
 
     public static final String SENT = "SMS_SENT";
     public static final String DELIVERED = "SMS_DELIVERED";
