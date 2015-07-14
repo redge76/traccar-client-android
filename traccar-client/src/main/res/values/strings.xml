@@ -4,28 +4,57 @@
     <string name="app_name">Traccar Client</string>
     <string name="app_logo">Traccar</string>
 
-    <string name="settings_id_title">Device identifier</string>
-    <string name="settings_address_title">Server address</string>
-    <string name="settings_address_summary">Domain name or IP address</string>
-    <string name="settings_port_title">Server port</string>
-    <string name="settings_port_summary">Tracking server TCP port</string>
-    <string name="settings_interval_title">Frequency</string>
-    <string name="settings_interval_summary">Messages interval in seconds</string>
-    <string name="settings_status_title">Service status</string>
-    <string name="settings_status_off">Start</string>
-    <string name="settings_status_on">Stop</string>
-    <string name="settings_status_off_summary">Service stopped</string>
-    <string name="settings_status_on_summary">Service running</string>
-    <string name="settings_extended_title">Extended format</string>
-    <string name="settings_extended_summary">Use new message format</string>
-    <string name="settings_provider_title">Location provider</string>
-    <string name="settings_provider_summary">Source of location data</string>
-    <string-array name="settings_provider_names">
-        <item>GPS provider</item>
-        <item>Network provider</item>
-        <item>Mixed provider</item>
-    </string-array>
-    
+    <string name="pref_cat_tracking">General tracking options</string>
+
+        <string name="settings_id_title">Device identifier</string>
+        <string name="settings_interval_title">Frequency</string>
+        <string name="settings_interval_summary">Messages interval in seconds</string>
+        <string name="settings_provider_title">Location provider</string>
+        <string name="settings_provider_summary">Source of location data</string>
+
+        <string-array name="settings_provider_names">
+            <item>GPS provider</item>
+            <item>Network provider</item>
+            <item>Mixed provider</item>
+        </string-array>
+
+    <string name="pref_cat_tracking_backends">Tracking backends</string>
+        <string name="pref_screen_tracking_inet">Internet</string>
+
+            <string name="settings_address_title">Server address</string>
+            <string name="settings_address_summary">Domain name or IP address</string>
+            <string name="settings_port_title">Server port</string>
+            <string name="settings_port_summary">Tracking server TCP port</string>
+            <string name="settings_extended_title">Extended format</string>
+            <string name="settings_extended_summary">Use new message format</string>
+
+            <string name="settings_tracking_inet_tracking_title">Internet tracking</string>
+            <string name="settings_tracking_inet_tracking_summary">Receive position updates via internet</string>
+
+        <string name="pref_screen_tracking_sms">SMS</string>
+
+            <string name="settings_tracking_sms_number_title">Tracking number</string>
+            <string name="settings_tracking_sms_number_summary">SMS tracking number</string>
+            <string name="settings_tracking_sms_tracking_title">SMS tracking</string>
+            <string name="settings_tracking_sms_tracking_summary">Receive position updates as SMS</string>
+
+    <string name="pref_cat_notifications">SMS notifications</string>
+
+        <string name="settings_notification_sms_number_title">Notification number</string>
+        <string name="settings_notification_sms_number_summary">SMS notification number</string>
+        <string name="settings_notification_sms_notification_title">SMS notifications</string>
+        <string name="settings_notification_sms_notification_summary">Receive notifications as SMS</string>
+        <string name="settings_battery_title">Battery warning</string>
+        <string name="settings_battery_summary">Receive notification of low battery level</string>
+
+    <string name="pref_cat_service">Service operation</string>
+
+        <string name="settings_status_title">Service status</string>
+        <string name="settings_status_off">Start</string>
+        <string name="settings_status_on">Stop</string>
+        <string name="settings_status_off_summary">Service stopped</string>
+        <string name="settings_status_on_summary">Service running</string>
+
     <string name="menu_status">Status</string>
     <string name="menu_about">About</string>
     <string name="menu_clear">Clear</string>
@@ -42,6 +71,21 @@
     <string name="status_location_update">Location update</string>
     <string name="status_preference_update">Preference update</string>
     <string name="status_connectivity_change">Connectivity change</string>
+    <string name="status_location_unknown">Location unknown</string>
     <string name="status_provider_missing">Missing location provider</string>
+
+    <string name="sms_sent">SMS sent</string>
+    <string name="sms_generic_failure">Generic failure</string>
+    <string name="sms_no_service">No service</string>
+    <string name="sms_null_pdu">Null PDU</string>
+    <string name="sms_radio_off">Radio off</string>
+    <string name="sms_delivered">SMS delivered</string>
+    <string name="sms_not_delivered">SMS not delivered</string>
+    <string name="sms_from">Received SMS from</string>
+    <string name="sms_body">Message</string>
+    <string name="sms_pos_time">Time</string>
+    <string name="sms_pos_values">Position (lat; lon; alt; speed; bat)</string>
+    <string name="sms_bat_warning">Warning! Battery level below</string>
+    <string name="sms_bat_percent">percent.</string>
 
 </resources>

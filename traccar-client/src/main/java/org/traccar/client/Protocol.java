@@ -15,12 +15,15 @@
  */
 package org.traccar.client;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Formatter;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import android.location.Location;
+import android.util.Log;
 
 /**
  * Protocol formatting
@@ -85,6 +88,51 @@ public class Protocol {
         }
         f.format("*%02x\r\n", (int) checksum);
         f.close();
+
+        return s.toString();
+    }
+
+    /**
+     * Format location message for SMS
+     */
+    public static String createSMSLocationMessage(Location l, double battery, String time, String position) {
+        StringBuilder s = new StringBuilder();
+        //Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ENGLISH);
+        //calendar.setTimeInMillis(l.getTime());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+        s.append(time);
+        s.append(": ");
+        s.append(sdf.format(new Date(l.getTime())));
+        s.append(" ");
+        s.append(position);
+        s.append(": ");
+        s.append(l.getLatitude());
+        s.append("; ");
+        s.append(l.getLongitude());
+        s.append("; ");
+        s.append(l.getAltitude());
+        s.append("; ");
+        s.append((l.getSpeed() * 3.6));
+        s.append("; ");
+        s.append(battery);
+
+        StatusActivity.addMessage(s.toString());
+        StatusActivity.addMessage(new Integer(s.toString().length()).toString());
+
+        return s.toString();
+    }
+
+    public static String makeNumeric(String param) {
+        StringBuilder s = new StringBuilder();
+
+        for(int i = 0; i < param.length(); i++) {
+            if(param.charAt(i) >= '0' && param.charAt(i) <= '9') {
+                s.append(param.charAt(i));
+            }
+        }
 
         return s.toString();
     }

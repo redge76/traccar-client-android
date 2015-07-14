@@ -1,49 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="@string/pref_cat_tracking"
+                        android:key="pref_cat_tracking">
+        <EditTextPreference
+                android:key="id"
+                android:title="@string/settings_id_title" />
+        <EditTextPreference
+                android:defaultValue="60"
+                android:key="interval"
+                android:numeric="integer"
+                android:summary="@string/settings_interval_summary"
+                android:title="@string/settings_interval_title" />
 
-    <EditTextPreference
-        android:key="id"
-        android:title="@string/settings_id_title" />
+        <ListPreference
+                android:defaultValue="gps"
+                android:entries="@array/settings_provider_names"
+                android:entryValues="@array/settings_provider_values"
+                android:key="provider"
+                android:summary="@string/settings_provider_summary"
+                android:title="@string/settings_provider_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_cat_tracking_backends"
+                        android:key="pref_cat_tracking_backends">
 
-    <EditTextPreference
-        android:defaultValue="demo.traccar.org"
-        android:key="address"
-        android:summary="@string/settings_address_summary"
-        android:title="@string/settings_address_title" />
+        <PreferenceScreen android:title="@string/pref_screen_tracking_inet"
+                          android:key="pref_screen_tracking_inet"
+                          android:persistent="false">
+            <EditTextPreference
+                    android:defaultValue="demo.traccar.org"
+                    android:key="address"
+                    android:summary="@string/settings_address_summary"
+                    android:title="@string/settings_address_title" />
 
-    <EditTextPreference
-        android:defaultValue="5005"
-        android:key="port"
-        android:numeric="integer"
-        android:summary="@string/settings_port_summary"
-        android:title="@string/settings_port_title" />
+            <EditTextPreference
+                    android:defaultValue="5005"
+                    android:key="port"
+                    android:numeric="integer"
+                    android:summary="@string/settings_port_summary"
+                    android:title="@string/settings_port_title" />
 
-    <EditTextPreference
-        android:defaultValue="60"
-        android:key="interval"
-        android:numeric="integer"
-        android:summary="@string/settings_interval_summary"
-        android:title="@string/settings_interval_title" />
+            <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="extended"
+                    android:summary="@string/settings_extended_summary"
+                    android:title="@string/settings_extended_title" />
+            <CheckBoxPreference
+                    android:defaultValue="true"
+                    android:key="tracking_inet"
+                    android:summary="@string/settings_tracking_inet_tracking_summary"
+                    android:title="@string/settings_tracking_inet_tracking_title" />
 
-    <ListPreference
-        android:defaultValue="gps"
-        android:entries="@array/settings_provider_names"
-        android:entryValues="@array/settings_provider_values"
-        android:key="provider"
-        android:summary="@string/settings_provider_summary"
-        android:title="@string/settings_provider_title" />
+        </PreferenceScreen>
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="extended"
-        android:summary="@string/settings_extended_summary"
-        android:title="@string/settings_extended_title" />
+        <PreferenceScreen android:title="@string/pref_screen_tracking_sms"
+                          android:key="pref_screen_tracking_sms"
+                          android:persistent="false">
+            <EditTextPreference
+                    android:defaultValue=""
+                    android:key="tracking_sms_number"
+                    android:numeric="integer"
+                    android:summary="@string/settings_tracking_sms_number_summary"
+                    android:title="@string/settings_tracking_sms_number_title" />
 
-    <CheckBoxPreference
-        android:defaultValue="false"
-        android:key="status"
-        android:summaryOff="@string/settings_status_off_summary"
-        android:summaryOn="@string/settings_status_on_summary"
-        android:title="@string/settings_status_title" />
+            <CheckBoxPreference
+                    android:defaultValue="false"
+                    android:key="tracking_sms"
+                    android:summary="@string/settings_tracking_sms_tracking_summary"
+                    android:title="@string/settings_tracking_sms_tracking_title" />
+
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_cat_notifications"
+                        android:key="pref_cat_notifications">
+        <EditTextPreference
+                android:defaultValue=""
+                android:key="notification_number"
+                android:numeric="integer"
+                android:summary="@string/settings_notification_sms_number_summary"
+                android:title="@string/settings_notification_sms_number_title" />
+        <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="notification_sms"
+                android:summary="@string/settings_notification_sms_notification_summary"
+                android:title="@string/settings_notification_sms_notification_title" />
+        <EditTextPreference
+                android:defaultValue="100"
+                android:key="battery"
+                android:numeric="integer"
+                android:summary="@string/settings_battery_summary"
+                android:title="@string/settings_battery_title" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_cat_service"
+                        android:key="pref_cat_service" >
+        <CheckBoxPreference
+                android:defaultValue="false"
+                android:key="status"
+                android:summaryOff="@string/settings_status_off_summary"
+                android:summaryOn="@string/settings_status_on_summary"
+                android:title="@string/settings_status_title" />
+    </PreferenceCategory>
 
 </PreferenceScreen>
