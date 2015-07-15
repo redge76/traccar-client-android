@@ -28,7 +28,7 @@ public class AutostartReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
     	SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-    	if (sharedPreferences.getBoolean(TraccarActivity.KEY_STATUS, false)) {
+    	if (sharedPreferences.getBoolean(SettingsActivity.KEY_STATUS, false)) {
     		context.startService(new Intent(context, TraccarService.class));
     	}
     }

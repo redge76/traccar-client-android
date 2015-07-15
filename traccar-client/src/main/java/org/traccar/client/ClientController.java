@@ -24,7 +24,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Handler;
-import android.util.Log;
 
 
 public class ClientController implements Connection.ConnectionHandler {
@@ -53,7 +52,7 @@ public class ClientController implements Connection.ConnectionHandler {
     private BroadcastReceiver connectivityListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            StatusActivity.addMessage(context.getString(R.string.status_connectivity_change));
+            LogsActivity.addMessage(context.getString(R.string.status_connectivity_change));
             /*if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
                 handler.removeCallbacksAndMessages(null);
             } else {
@@ -118,10 +117,10 @@ public class ClientController implements Connection.ConnectionHandler {
     @Override
     public void onConnected(boolean result) {
         if (result) {
-            StatusActivity.addMessage(context.getString(R.string.status_connection_success));
+            LogsActivity.addMessage(context.getString(R.string.status_connection_success));
             connection.send(loginMessage);
         } else {
-            StatusActivity.addMessage(context.getString(R.string.status_connection_fail));
+            LogsActivity.addMessage(context.getString(R.string.status_connection_fail));
             delayedReconnect();
         }
     }
@@ -133,7 +132,7 @@ public class ClientController implements Connection.ConnectionHandler {
                 connection.send(messageQueue.poll());
             }
         } else {
-            StatusActivity.addMessage(context.getString(R.string.status_send_fail));
+            LogsActivity.addMessage(context.getString(R.string.status_send_fail));
             delayedReconnect();
         }
     }

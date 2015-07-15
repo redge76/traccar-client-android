@@ -15,8 +15,6 @@
  */
 package org.traccar.client;
 
-import java.util.Date;
-
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationListener;
@@ -24,7 +22,6 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
-import android.widget.Toast;
 
 public class PositionProvider {
 
@@ -68,14 +65,14 @@ public class PositionProvider {
             try {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, period, 0, fineLocationListener);
             } catch (Exception e) {
-                StatusActivity.addMessage(context.getString(R.string.status_provider_missing));
+                LogsActivity.addMessage(context.getString(R.string.status_provider_missing));
             }
         }
         if (useCoarse) {
             try {
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, period, 0, coarseLocationListener);
             } catch (Exception e) {
-                StatusActivity.addMessage(context.getString(R.string.status_provider_missing));
+                LogsActivity.addMessage(context.getString(R.string.status_provider_missing));
             }
         }
         handler.postDelayed(updateTask, period);

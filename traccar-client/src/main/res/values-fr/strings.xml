@@ -42,5 +42,7 @@
     <string name="status_location_update">Localisation mise à jour</string>
     <string name="status_preference_update">Mise à jour des préférences</string>
     <string name="status_connectivity_change">Changement de connectivité</string>
+    <string name="action_settings">Paramètres</string>
+    <string name="menu_logs">Logs</string>
 
 </resources>

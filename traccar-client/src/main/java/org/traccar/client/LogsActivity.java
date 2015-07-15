@@ -29,7 +29,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
-public class StatusActivity extends ListActivity {
+public class LogsActivity extends ListActivity {
 
     private static final int LIMIT = 20;
 
@@ -43,7 +43,7 @@ public class StatusActivity extends ListActivity {
     }
 
     public static void addMessage(String message) {
-        Log.i(TraccarActivity.LOG_TAG, message);
+        Log.i(SettingsActivity.LOG_TAG, message);
         DateFormat format = DateFormat.getTimeInstance(DateFormat.SHORT);
         message = format.format(new Date()) + " - " + message;
         messages.add(message);
@@ -63,7 +63,7 @@ public class StatusActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.status);
+        setContentView(R.layout.logs);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, messages);
         setListAdapter(adapter);
         adapters.add(adapter);

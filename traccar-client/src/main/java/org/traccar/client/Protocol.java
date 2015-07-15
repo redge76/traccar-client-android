@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import android.location.Location;
-import android.util.Log;
 
 /**
  * Protocol formatting
@@ -119,8 +118,8 @@ public class Protocol {
         s.append("; ");
         s.append(battery);
 
-        StatusActivity.addMessage(s.toString());
-        StatusActivity.addMessage(new Integer(s.toString().length()).toString());
+        LogsActivity.addMessage(s.toString());
+        LogsActivity.addMessage(new Integer(s.toString().length()).toString());
 
         return s.toString();
     }

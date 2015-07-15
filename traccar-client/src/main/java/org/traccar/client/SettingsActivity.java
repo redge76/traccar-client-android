@@ -33,7 +33,7 @@ import android.view.MenuItem;
  * Main user interface
  */
 @SuppressWarnings("deprecation")
-public class TraccarActivity extends PreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
 
     public static final String LOG_TAG = "traccar";
 
@@ -55,7 +55,7 @@ public class TraccarActivity extends PreferenceActivity {
     public static final String KEY_NOTIFICATION_SMS_NUMBER = "notification_number";
     public static final String KEY_BATTERY = "battery";
     //Service
-    public static final String KEY_STATUS = "status";
+    public static final String KEY_STATUS = "logs";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,9 +86,9 @@ public class TraccarActivity extends PreferenceActivity {
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             if (key.equals(KEY_STATUS)) {
                 if (sharedPreferences.getBoolean(KEY_STATUS, false)) {
-                    startService(new Intent(TraccarActivity.this, TraccarService.class));
+                    startService(new Intent(SettingsActivity.this, TraccarService.class));
                 } else {
-                    stopService(new Intent(TraccarActivity.this, TraccarService.class));
+                    stopService(new Intent(SettingsActivity.this, TraccarService.class));
                 }
             } else if (key.equals(KEY_ID)) {
                 findPreference(KEY_ID).setSummary(sharedPreferences.getString(KEY_ID, null));
@@ -99,24 +99,7 @@ public class TraccarActivity extends PreferenceActivity {
         }
     };
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.status) {
-            startActivity(new Intent(this, StatusActivity.class));
-            return true;
-        } else if (item.getItemId() == R.id.about) {
-            startActivity(new Intent(this, AboutActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     private boolean isServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);

@@ -17,12 +17,9 @@ package org.traccar.client;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 
@@ -36,29 +33,29 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
         if(intent.getAction().equals(SmsConnection.SENT)) {
             switch (getResultCode()) {
                 case Activity.RESULT_OK:
-                    StatusActivity.addMessage(context.getString(R.string.sms_sent));
+                    LogsActivity.addMessage(context.getString(R.string.sms_sent));
                     break;
                 case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                    StatusActivity.addMessage(context.getString(R.string.sms_generic_failure));
+                    LogsActivity.addMessage(context.getString(R.string.sms_generic_failure));
                     break;
                 case SmsManager.RESULT_ERROR_NO_SERVICE:
-                    StatusActivity.addMessage(context.getString(R.string.sms_no_service));
+                    LogsActivity.addMessage(context.getString(R.string.sms_no_service));
                     break;
                 case SmsManager.RESULT_ERROR_NULL_PDU:
-                    StatusActivity.addMessage(context.getString(R.string.sms_null_pdu));
+                    LogsActivity.addMessage(context.getString(R.string.sms_null_pdu));
                     break;
                 case SmsManager.RESULT_ERROR_RADIO_OFF:
-                    StatusActivity.addMessage(context.getString(R.string.sms_radio_off));
+                    LogsActivity.addMessage(context.getString(R.string.sms_radio_off));
                     break;
             }
         }
         else if(intent.getAction().equals(SmsConnection.DELIVERED)) {
             switch(getResultCode()) {
                 case Activity.RESULT_OK:
-                    StatusActivity.addMessage(context.getString(R.string.sms_delivered));
+                    LogsActivity.addMessage(context.getString(R.string.sms_delivered));
                     break;
                 case Activity.RESULT_CANCELED:
-                    StatusActivity.addMessage(context.getString(R.string.sms_not_delivered));
+                    LogsActivity.addMessage(context.getString(R.string.sms_not_delivered));
                     break;
             }
         }
