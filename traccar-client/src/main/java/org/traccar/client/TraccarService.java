@@ -33,8 +33,8 @@ import android.util.Log;
  */
 public class TraccarService extends Service {
 
-    public static final String LOG_TAG = "Traccar.TraccarService";
-
+    private static final String TAG = TraccarService.class.getName();
+    
     private static final String SMS_COMMAND_POS = "pos";
     private static final String SMS_COMMAND_ENABLE = "enable";
     private static final String SMS_COMMAND_DISABLE = "disable";
@@ -75,6 +75,7 @@ public class TraccarService extends Service {
 
     @Override
     public void onCreate() {
+        Log.i(TAG, "Creating service obj");
         LogsActivity.addMessage(getString(R.string.status_service_create));
 
         lastLocation = null;
@@ -118,7 +119,7 @@ public class TraccarService extends Service {
             } else lowBatteryWarningSent = false;
 
         } catch (Exception error) {
-            Log.w(LOG_TAG, error);
+            Log.e(TAG, error.toString());
         }
 
         clientController = new ClientController(this, address, port, Protocol.createLoginMessage(id));
@@ -135,6 +136,7 @@ public class TraccarService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.i(TAG, "Received start id " + startId + ": " + intent);
         if (intent != null && intent.getAction() != null) {
             if (intent.getAction().equals(ACTION_RECEIVE_SMS)) {
                 Bundle bundle = intent.getExtras();
@@ -344,7 +346,7 @@ public class TraccarService extends Service {
                     } else lowBatteryWarningSent = false;
                 }
             } catch (Exception error) {
-                Log.w(LOG_TAG, error);
+                Log.w(TAG, error);
             }
         }
 
