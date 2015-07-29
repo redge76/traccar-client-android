@@ -78,7 +78,7 @@ public class LogsActivity extends ListActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.status, menu);
+        inflater.inflate(R.menu.logs_menu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
