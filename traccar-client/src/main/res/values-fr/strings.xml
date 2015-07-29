@@ -44,5 +44,6 @@
     <string name="status_connectivity_change">Changement de connectivité</string>
     <string name="action_settings">Paramètres</string>
     <string name="menu_logs">Logs</string>
+    <string name="id">ID</string>
 
 </resources>

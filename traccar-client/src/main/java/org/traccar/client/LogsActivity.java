@@ -90,5 +90,5 @@ public class LogsActivity extends ListActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
+//TODO: add longpress to the LogsActivity
 }

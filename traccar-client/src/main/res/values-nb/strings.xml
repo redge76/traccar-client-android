@@ -43,5 +43,6 @@
     <string name="status_preference_update">Innstillinger oppdatert</string>
     <string name="status_connectivity_change">Tilkobling forandret</string>
     <string name="menu_logs">Logs</string>
+    <string name="id">ID</string>
 
 </resources>

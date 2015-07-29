@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,8 +35,8 @@ import android.view.MenuItem;
  */
 @SuppressWarnings("deprecation")
 public class SettingsActivity extends PreferenceActivity {
-
-    public static final String LOG_TAG = "traccar";
+    //TODO: move the key to the string XML file
+    public static final String LOG_TAG = "PreferenceActivity";
 
     //Tracking
     public static final String KEY_ID = "id";
@@ -55,16 +56,16 @@ public class SettingsActivity extends PreferenceActivity {
     public static final String KEY_NOTIFICATION_SMS_NUMBER = "notification_number";
     public static final String KEY_BATTERY = "battery";
     //Service
-    public static final String KEY_STATUS = "logs";
+    public static final String KEY_STATUS = "status";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-        initPreferences();
         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
         if (sharedPreferences.getBoolean(KEY_STATUS, false))
             startService(new Intent(this, TraccarService.class));
+        findPreference(KEY_ID).setSummary(sharedPreferences.getString(KEY_ID, null));
     }
 
     @Override
@@ -87,18 +88,19 @@ public class SettingsActivity extends PreferenceActivity {
             if (key.equals(KEY_STATUS)) {
                 if (sharedPreferences.getBoolean(KEY_STATUS, false)) {
                     startService(new Intent(SettingsActivity.this, TraccarService.class));
+                    Log.d(LOG_TAG, "Starting service");
                 } else {
                     stopService(new Intent(SettingsActivity.this, TraccarService.class));
+                    Log.d(LOG_TAG, "Stopping service");
                 }
             } else if (key.equals(KEY_ID)) {
                 findPreference(KEY_ID).setSummary(sharedPreferences.getString(KEY_ID, null));
             }
 
-            getPreferenceScreen().removeAll();
-            addPreferencesFromResource(R.xml.preferences);
+            //getPreferenceScreen().removeAll();
+            //addPreferencesFromResource(R.xml.preferences);
         }
     };
-
 
 
     private boolean isServiceRunning() {
@@ -111,18 +113,5 @@ public class SettingsActivity extends PreferenceActivity {
         return false;
     }
 
-    private void initPreferences() {
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
-
-        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        String id = telephonyManager.getDeviceId();
-
-        SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
-
-        if (!sharedPreferences.contains(KEY_ID)) {
-            sharedPreferences.edit().putString(KEY_ID, id).commit();
-        }
-        findPreference(KEY_ID).setSummary(sharedPreferences.getString(KEY_ID, id));
-    }
 
 }

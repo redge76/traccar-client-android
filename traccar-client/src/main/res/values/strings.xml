@@ -6,9 +6,10 @@
 
 
     <!--Main-->
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_main">Traccar Client</string>
-
+    <string name="mainactivity_action_settings">Settings</string>
+    <string name="mainactivity_title">Traccar Client</string>
+    <string name="mainactivity_id_textView">ID</string>
+    <string name="mainactivity_status_textView">Status</string>
 
     <!--Settings-->
     <string name="pref_cat_tracking">General tracking options</string>
@@ -100,6 +101,7 @@
     <string name="sms_bat_warning">Warning! Battery level below</string>
     <string name="sms_bat_percent">percent.</string>
     <string name="menu_logs">Logs</string>
+    <string name="id">ID</string>
 
 
 </resources>
