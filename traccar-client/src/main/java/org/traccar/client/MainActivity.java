@@ -32,8 +32,8 @@ public class MainActivity extends Activity {
         idEditText = (EditText) findViewById(R.id.mainactivity_id_EditText);
         statusEditText = (EditText) findViewById(R.id.mainactivity_status_EditText);
 
-        idEditText.setText(sharedPreferences.getString(SettingsActivity.KEY_ID, "N/A"));
-        statusEditText.setText(Boolean.toString(sharedPreferences.getBoolean(SettingsActivity.KEY_STATUS, false)));
+        idEditText.setText(sharedPreferences.getString(getString(R.string.pref_key_id), "N/A"));
+        statusEditText.setText(Boolean.toString(sharedPreferences.getBoolean(getString(R.string.pref_key_status), false)));
         sharedPreferences.registerOnSharedPreferenceChangeListener(
                 preferenceChangeListener);
 
@@ -80,8 +80,8 @@ public class MainActivity extends Activity {
     SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(SettingsActivity.KEY_STATUS)) {
-                statusEditText.setText(Boolean.toString(sharedPreferences.getBoolean(SettingsActivity.KEY_STATUS, true)));
+            if (key.equals(getString(R.string.pref_key_status))) {
+                statusEditText.setText(Boolean.toString(sharedPreferences.getBoolean(getString(R.string.pref_key_status), true)));
             }
         }
     };
@@ -91,8 +91,8 @@ public class MainActivity extends Activity {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String id = telephonyManager.getDeviceId();
-        if (!sharedPreferences.contains(SettingsActivity.KEY_ID)) {
-            sharedPreferences.edit().putString(SettingsActivity.KEY_ID, id).commit();
+        if (!sharedPreferences.contains(getString(R.string.pref_key_id))) {
+            sharedPreferences.edit().putString(getString(R.string.pref_key_id), id).commit();
         }
     }
 

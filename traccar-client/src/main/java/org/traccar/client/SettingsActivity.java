@@ -38,34 +38,16 @@ public class SettingsActivity extends PreferenceActivity {
     //TODO: move the key to the string XML file
     public static final String LOG_TAG = "PreferenceActivity";
 
-    //Tracking
-    public static final String KEY_ID = "id";
-    public static final String KEY_INTERVAL = "interval";
-    public static final String KEY_PROVIDER = "provider";
-    //Backends
-    //Inet
-    public static final String KEY_ADDRESS = "address";
-    public static final String KEY_PORT = "port";
-    public static final String KEY_EXTENDED = "extended";
-    public static final String KEY_TRACKING_INET = "tracking_inet";
-    //Sms
-    public static final String KEY_TRACKING_SMS = "tracking_sms";
-    public static final String KEY_TRACKING_SMS_NUMBER = "tracking_sms_number";
-    //Notifications
-    public static final String KEY_NOTIFICATION_SMS = "notification_sms";
-    public static final String KEY_NOTIFICATION_SMS_NUMBER = "notification_number";
-    public static final String KEY_BATTERY = "battery";
-    //Service
-    public static final String KEY_STATUS = "status";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
-        if (sharedPreferences.getBoolean(KEY_STATUS, false))
+        if (sharedPreferences.getBoolean(getString(R.string.pref_key_status), false))
             startService(new Intent(this, TraccarService.class));
-        findPreference(KEY_ID).setSummary(sharedPreferences.getString(KEY_ID, null));
+        findPreference(getString(R.string.pref_key_id)).setSummary(sharedPreferences.getString(getString(R.string.pref_key_id), null));
     }
 
     @Override
@@ -85,16 +67,16 @@ public class SettingsActivity extends PreferenceActivity {
     OnSharedPreferenceChangeListener preferenceChangeListener = new OnSharedPreferenceChangeListener() {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if (key.equals(KEY_STATUS)) {
-                if (sharedPreferences.getBoolean(KEY_STATUS, false)) {
+            if (key.equals(getString(R.string.pref_key_status))) {
+                if (sharedPreferences.getBoolean(getString(R.string.pref_key_status), false)) {
                     startService(new Intent(SettingsActivity.this, TraccarService.class));
                     Log.d(LOG_TAG, "Starting service");
                 } else {
                     stopService(new Intent(SettingsActivity.this, TraccarService.class));
                     Log.d(LOG_TAG, "Stopping service");
                 }
-            } else if (key.equals(KEY_ID)) {
-                findPreference(KEY_ID).setSummary(sharedPreferences.getString(KEY_ID, null));
+            } else if (key.equals(getString(R.string.pref_key_id))) {
+                findPreference(getString(R.string.pref_key_id)).setSummary(sharedPreferences.getString(getString(R.string.pref_key_id), null));
             }
 
             //getPreferenceScreen().removeAll();

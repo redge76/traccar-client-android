@@ -6,5 +6,37 @@
         <item>network</item>
         <item>mixed</item>
     </string-array>
+    <!-- SMS commands -->
+    <string name="sms_command_pos">pos</string>
+    <string name="sms_command_enable">enable</string>
+    <string name="sms_command_disable">disable</string>
+    <string name="sms_command_server">server</string>
+    <string name="sms_command_port">port</string>
+    <string name="sms_command_frequency">frequency</string>
+    <string name="sms_command_freq">freq</string>
+    <string name="sms_command_number">number</string>
+    <string name="sms_command_battery">battery</string>
+
+    <!-- Preferences keys -->
+    //Tracking
+    <string name="pref_key_id">id</string>
+    <string name="pref_key_interval">interval</string>
+    <string name="pref_key_provider">provider</string>
+    //backends
+    //inet
+    <string name="pref_key_address">address</string>
+    <string name="pref_key_port">port</string>
+    <string name="pref_key_extended">extended</string>
+    <string name="pref_key_tracking_inet">tracking_inet</string>
+    //sms
+    <string name="pref_key_tracking_sms">tracking_sms</string>
+    <string name="pref_key_tracking_sms_number">tracking_sms_number</string>
+    //notifications
+    <string name="pref_key_notification_sms">notification_sms</string>
+    <string name="pref_key_notification_sms_number">notification_number</string>
+    <string name="pref_key_battery">battery</string>
+    //service
+    <string name="pref_key_status">status</string>
+
 
 </resources>
