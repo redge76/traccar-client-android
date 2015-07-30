@@ -16,9 +16,13 @@
 package org.traccar.client;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import android.app.ListActivity;
@@ -27,51 +31,95 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 public class LogsActivity extends ListActivity {
 
+    private static final String TAG = SettingsActivity.class.getName();
+
     private static final int LIMIT = 20;
 
-    private static final LinkedList<String> messages = new LinkedList<String>();
-    private static final Set<ArrayAdapter<String>> adapters = new HashSet<ArrayAdapter<String>>();
+    private static final LinkedList<ArrayList<String>> messages = new LinkedList<ArrayList<String>>();
+    private static final List<String> messages2 = new LinkedList<String>();
+    //private static final Set<ArrayAdapter<String>> adapters = new HashSet<ArrayAdapter<String>>();
 
-    private static void notifyAdapters() {
-        for (ArrayAdapter<String> adapter : adapters) {
-            adapter.notifyDataSetChanged();
-        }
+    private static ArrayAdapter adapter;
+    //private ArrayAdapter<String> adapter;
+
+//    private static void notifyAdapters() {
+//        for (ArrayAdapter<String> adapter : adapters) {
+//            adapter.notifyDataSetChanged();
+//        }
+//    }
+
+    public static void addMessage(String message1, String message2) {
+        Log.i(TAG, "Adding message : " + message1 + "\n message2: " + message2);
+        DateFormat format = DateFormat.getTimeInstance(DateFormat.SHORT);
+        message1 = format.format(new Date()) + " - " + message1;
+        messages.add(new ArrayList<String>(Arrays.asList(message1, message2)));
+
+        trimMessages();
     }
 
     public static void addMessage(String message) {
-        Log.i(SettingsActivity.LOG_TAG, message);
+
+        Log.i(TAG, "Adding message : " + message);
+
         DateFormat format = DateFormat.getTimeInstance(DateFormat.SHORT);
         message = format.format(new Date()) + " - " + message;
-        messages.add(message);
+
+        messages.add(new ArrayList<String>(Arrays.asList(message)));
+
+        trimMessages();
+        if (adapter != null) adapter.notifyDataSetChanged();
+
+    }
+
+    private static void trimMessages() {
         while (messages.size() > LIMIT) {
             messages.removeFirst();
         }
-        notifyAdapters();
     }
 
     public static void clearMessages() {
         messages.clear();
-        notifyAdapters();
+        adapter.notifyDataSetChanged();
     }
 
-    private ArrayAdapter<String> adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Creating LogsActivity instance");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.logs);
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, messages);
+
+        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_2, android.R.id.text1, messages) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+                if (messages.get(position).size() == 1) {
+                    text1.setText(messages.get(position).get(0));
+                    text2.setText("-");
+                } else {
+                    text1.setText(messages.get(position).get(0));
+                    text2.setText(messages.get(position).get(1));
+                }
+                return view;
+            }
+        };
         setListAdapter(adapter);
-        adapters.add(adapter);
+
     }
 
     @Override
     protected void onDestroy() {
-        adapters.remove(adapter);
+
         super.onDestroy();
     }
 
