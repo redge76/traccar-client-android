@@ -20,15 +20,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class AutostartReceiver extends BroadcastReceiver {
-	
-	public static final String LOG_TAG = "Traccar.AutostartReceiver";
+
+	private static final String TAG = AutostartReceiver.class.getName();
  
     @Override
     public void onReceive(Context context, Intent intent) {
-    	SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+		Log.d(TAG, "Received autostart intent" + intent.getAction());
+		SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		if (sharedPreferences.getBoolean(context.getResources().getString(R.string.pref_key_status), false)) {
+			Log.d(TAG, "Autostarting the service");
 			context.startService(new Intent(context, TraccarService.class));
     	}
     }

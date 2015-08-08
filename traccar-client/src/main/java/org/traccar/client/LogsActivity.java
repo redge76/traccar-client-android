@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import android.app.ListActivity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -40,34 +41,25 @@ public class LogsActivity extends ListActivity {
 
     private static final String TAG = SettingsActivity.class.getName();
 
-    private static final int LIMIT = 20;
+    private final static int LIMIT = 20;
 
     private static final LinkedList<ArrayList<String>> messages = new LinkedList<ArrayList<String>>();
     private static final List<String> messages2 = new LinkedList<String>();
-    //private static final Set<ArrayAdapter<String>> adapters = new HashSet<ArrayAdapter<String>>();
+
 
     private static ArrayAdapter adapter;
-    //private ArrayAdapter<String> adapter;
 
-//    private static void notifyAdapters() {
-//        for (ArrayAdapter<String> adapter : adapters) {
-//            adapter.notifyDataSetChanged();
-//        }
-//    }
-
+    //TODO: make this better
     public static void addMessage(String message1, String message2) {
-        Log.i(TAG, "Adding message : " + message1 + "\n message2: " + message2);
+        Log.i(TAG, "Adding message1: " + message1 + "\n message2: " + message2);
         DateFormat format = DateFormat.getTimeInstance(DateFormat.SHORT);
         message1 = format.format(new Date()) + " - " + message1;
         messages.add(new ArrayList<String>(Arrays.asList(message1, message2)));
-
         trimMessages();
     }
 
     public static void addMessage(String message) {
-
-        Log.i(TAG, "Adding message : " + message);
-
+        Log.i(TAG, "Adding message: " + message);
         DateFormat format = DateFormat.getTimeInstance(DateFormat.SHORT);
         message = format.format(new Date()) + " - " + message;
 
@@ -88,7 +80,6 @@ public class LogsActivity extends ListActivity {
         messages.clear();
         adapter.notifyDataSetChanged();
     }
-
 
 
     @Override
@@ -119,7 +110,6 @@ public class LogsActivity extends ListActivity {
 
     @Override
     protected void onDestroy() {
-
         super.onDestroy();
     }
 

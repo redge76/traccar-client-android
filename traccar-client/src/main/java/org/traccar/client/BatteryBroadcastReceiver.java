@@ -19,12 +19,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.BatteryManager;
+import android.util.Log;
 
 public class BatteryBroadcastReceiver extends BroadcastReceiver {
 
+    private static final String TAG = BatteryBroadcastReceiver.class.getName();
+
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        Log.d(TAG, "Received batterybroadcast action: " + intent.getAction() + " level: " + intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0) + " scale: " + intent.getIntExtra(BatteryManager.EXTRA_SCALE, 1));
         int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
         int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 1);
 

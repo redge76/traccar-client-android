@@ -35,13 +35,12 @@ import android.view.MenuItem;
  */
 @SuppressWarnings("deprecation")
 public class SettingsActivity extends PreferenceActivity {
-    //TODO: move the key to the string XML file
-    public static final String LOG_TAG = "PreferenceActivity";
 
-
+    private static final String TAG = SettingsActivity.class.getName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Creating activity");
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         SharedPreferences sharedPreferences = getPreferenceScreen().getSharedPreferences();
@@ -70,17 +69,15 @@ public class SettingsActivity extends PreferenceActivity {
             if (key.equals(getString(R.string.pref_key_status))) {
                 if (sharedPreferences.getBoolean(getString(R.string.pref_key_status), false)) {
                     startService(new Intent(SettingsActivity.this, TraccarService.class));
-                    Log.d(LOG_TAG, "Starting service");
+                    Log.d(TAG, "Starting traccar service");
                 } else {
                     stopService(new Intent(SettingsActivity.this, TraccarService.class));
-                    Log.d(LOG_TAG, "Stopping service");
+                    Log.d(TAG, "Stopping traccar service");
                 }
             } else if (key.equals(getString(R.string.pref_key_id))) {
                 findPreference(getString(R.string.pref_key_id)).setSummary(sharedPreferences.getString(getString(R.string.pref_key_id), null));
             }
 
-            //getPreferenceScreen().removeAll();
-            //addPreferencesFromResource(R.xml.preferences);
         }
     };
 

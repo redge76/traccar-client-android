@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,6 +16,9 @@ import android.widget.TextView;
 
 
 public class MainActivity extends Activity {
+
+    private static final String TAG = SettingsActivity.class.getName();
+
     private TextView idTextView;
     private TextView statusTextView;
     private EditText idEditText;
@@ -23,6 +27,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Starting the activity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -35,6 +40,9 @@ public class MainActivity extends Activity {
         statusEditText.setText(Boolean.toString(sharedPreferences.getBoolean(getString(R.string.pref_key_status), false)));
         sharedPreferences.registerOnSharedPreferenceChangeListener(
                 preferenceChangeListener);
+
+        LogsActivity.addMessage("Starting traccar");
+
 
     }
 
@@ -87,6 +95,7 @@ public class MainActivity extends Activity {
 
 
     private void initPreferences() {
+        Log.d(TAG, "Initializing preferences");
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String id = telephonyManager.getDeviceId();

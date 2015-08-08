@@ -30,7 +30,7 @@ import android.util.Log;
  */
 public class Connection implements Closeable {
 
-    public static final String LOG_TAG = "Traccar.Connection";
+    private static final String TAG = Connection.class.getName();
     public static final int SOCKET_TIMEOUT = 10 * 1000;
 
     /**
@@ -77,7 +77,7 @@ public class Connection implements Closeable {
                     socketStream = socket.getOutputStream();
                     return true;
                 } catch (Exception e) {
-                    Log.w(LOG_TAG, e.getMessage());
+                    Log.w(TAG, e.getMessage());
                     return false;
                 }
             }
@@ -114,7 +114,7 @@ public class Connection implements Closeable {
                     socketStream.flush();
                     return true;
                 } catch (Exception e) {
-                    Log.w(LOG_TAG, e.getMessage());
+                    Log.w(TAG, e.getMessage());
                     return false;
                 }
             }
@@ -150,7 +150,7 @@ public class Connection implements Closeable {
                 socket.close();
             }
         } catch (Exception e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Log.e(TAG, e.getMessage());
         }
     }
 

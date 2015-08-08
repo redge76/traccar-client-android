@@ -18,12 +18,15 @@ package org.traccar.client;
 import android.app.Activity;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 public class AboutActivity extends Activity {
+    private static final String TAG = AboutActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "Starting the AboutActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about);
 

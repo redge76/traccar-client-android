@@ -15,15 +15,16 @@
  */
 package org.traccar.client;
 
-import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
-import android.os.*;
+import android.os.BatteryManager;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -34,7 +35,7 @@ import android.util.Log;
 public class TraccarService extends Service {
 
     private static final String TAG = TraccarService.class.getName();
-    
+
 
     private String id;
     private String address;
@@ -85,6 +86,7 @@ public class TraccarService extends Service {
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
+        //TODO: do we really need wakelock ?
         //wakeLock.acquire();
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -105,9 +107,9 @@ public class TraccarService extends Service {
             smsNotificationNumber = sharedPreferences.getString(getString(R.string.pref_key_notification_sms_number), null);
 
             lowBatteryWarning = Integer.valueOf(sharedPreferences.getString(getString(R.string.pref_key_battery), null));
-            if (lowBatteryWarning <= (int) getBatteryLevel()) {
-                lowBatteryWarningSent = true;
-            } else lowBatteryWarningSent = false;
+//            if (lowBatteryWarning <= (int) getBatteryLevel()) {
+//                lowBatteryWarningSent = true;
+//            } else lowBatteryWarningSent = false;
 
         } catch (Exception error) {
             Log.e(TAG, error.toString());
@@ -122,12 +124,12 @@ public class TraccarService extends Service {
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
 
         myBatteryBroadcastReceiver = new BatteryBroadcastReceiver();
-        registerReceiver(myBatteryBroadcastReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+//        registerReceiver(myBatteryBroadcastReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "Received start id " + startId + ": " + intent);
+        Log.i(TAG, "Service received onStartCommand id: " + startId + " intent: " + intent);
         if (intent != null && intent.getAction() != null) {
             if (intent.getAction().equals(ACTION_RECEIVE_SMS)) {
                 Bundle bundle = intent.getExtras();
@@ -144,7 +146,7 @@ public class TraccarService extends Service {
                 int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, 1);
                 int battery = (int) ((level * 100.0) / scale);
 
-                if(smsNotification) {
+                if (smsNotification) {
                     if (lowBatteryWarning > 0 && lowBatteryWarning < 100 && battery <= lowBatteryWarning) {
                         if (!lowBatteryWarningSent) {
                             smsCon.send(smsNotificationNumber, getString(R.string.sms_bat_warning) + " " +
@@ -183,8 +185,8 @@ public class TraccarService extends Service {
 
             } else {
 
-                smsCon.send(Number, Protocol.createSMSLocationMessage(lastLocation, getBatteryLevel(),
-                        getString(R.string.sms_pos_time), getString(R.string.sms_pos_values)));
+//                smsCon.send(Number, Protocol.createSMSLocationMessage(lastLocation, getBatteryLevel(),
+//                        getString(R.string.sms_pos_time), getString(R.string.sms_pos_values)));
             }
         } else if (Message.compareTo(getString(R.string.pref_key_tracking_sms)) == 0) {
 
@@ -253,17 +255,17 @@ public class TraccarService extends Service {
         //wakeLock.release();
     }
 
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
-    public double getBatteryLevel() {
-        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR) {
-            Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-            int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
-            int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, 1);
-            return (level * 100.0) / scale;
-        } else {
-            return 0;
-        }
-    }
+//    @TargetApi(Build.VERSION_CODES.ECLAIR)
+//    public double getBatteryLevel() {
+//        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR) {
+//            Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+//            int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
+//            int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, 1);
+//            return (level * 100.0) / scale;
+//        } else {
+//            return 0;
+//        }
+//    }
 
     private PositionProvider.PositionListener positionListener = new PositionProvider.PositionListener() {
 
@@ -273,14 +275,14 @@ public class TraccarService extends Service {
                 lastLocation = location;
                 LogsActivity.addMessage(getString(R.string.status_location_update));
 
-                if (smsTracking) {
-                    smsCon.send(smsTrackingNumber, Protocol.createSMSLocationMessage(location, getBatteryLevel(),
-                            getString(R.string.sms_pos_time), getString(R.string.sms_pos_values)));
-                }
-
-                if (inetTracking) {
-                    clientController.setNewLocation(Protocol.createLocationMessage(extended, location, getBatteryLevel()));
-                }
+//                if (smsTracking) {
+//                    smsCon.send(smsTrackingNumber, Protocol.createSMSLocationMessage(location, getBatteryLevel(),
+//                            getString(R.string.sms_pos_time), getString(R.string.sms_pos_values)));
+//                }
+//
+//                if (inetTracking) {
+//                    clientController.setNewLocation(Protocol.createLocationMessage(extended, location, getBatteryLevel()));
+//                }
             }
         }
 
@@ -333,12 +335,12 @@ public class TraccarService extends Service {
                     smsNotificationNumber = sharedPreferences.getString(getString(R.string.pref_key_notification_sms_number), null);
                 } else if (key.equals(getString(R.string.pref_key_battery))) {
                     lowBatteryWarning = Integer.valueOf(sharedPreferences.getString(getString(R.string.pref_key_battery), null));
-                    if (lowBatteryWarning <= getBatteryLevel()) {
-                        lowBatteryWarningSent = true;
-                    } else lowBatteryWarningSent = false;
+//                    if (lowBatteryWarning <= getBatteryLevel()) {
+//                        lowBatteryWarningSent = true;
+//                    } else lowBatteryWarningSent = false;
                 }
             } catch (Exception error) {
-                Log.w(TAG, error);
+                Log.e(TAG, error.toString());
             }
         }
 

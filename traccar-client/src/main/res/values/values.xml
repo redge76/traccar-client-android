@@ -38,5 +38,7 @@
     //service
     <string name="pref_key_status">status</string>
 
+    <integer name="defaults_max_logs_messages">20</integer>
+
 
 </resources>

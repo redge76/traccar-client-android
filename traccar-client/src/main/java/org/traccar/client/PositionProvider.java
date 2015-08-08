@@ -22,8 +22,14 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
+//TODO: Use alarmanager instead of Handler. Check http://developer.android.com/reference/java/util/concurrent/ScheduledExecutorService.html http://stackoverflow.com/questions/4459058/alarm-manager-example
+//TODO: use the google API https://developers.google.com/android/reference/com/google/android/gms/location/FusedLocationProviderApi
+//TODO: remove de runable check https://github.com/chathudan/traccar-client-android/commit/c36aa9131178cebe59224b6858691acc73bb6297
 public class PositionProvider {
+
+    private static final String TAG = PositionProvider.class.getName();
 
     public static final String PROVIDER_MIXED = "mixed";
     public static final long PERIOD_DELTA = 10 * 1000;
@@ -65,6 +71,7 @@ public class PositionProvider {
             try {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, period, 0, fineLocationListener);
             } catch (Exception e) {
+                Log.e(TAG, context.getString(R.string.status_provider_missing));
                 LogsActivity.addMessage(context.getString(R.string.status_provider_missing));
             }
         }
@@ -72,6 +79,7 @@ public class PositionProvider {
             try {
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, period, 0, coarseLocationListener);
             } catch (Exception e) {
+                Log.e(TAG, context.getString(R.string.status_provider_missing));
                 LogsActivity.addMessage(context.getString(R.string.status_provider_missing));
             }
         }

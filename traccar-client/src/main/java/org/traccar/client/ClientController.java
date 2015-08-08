@@ -23,10 +23,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
+import android.util.Log;
 
 
 public class ClientController implements Connection.ConnectionHandler {
+
+    private static final String TAG = ClientController.class.getName();
 
     public static final long RECONNECT_DELAY = 10 * 1000;
 
@@ -49,10 +53,27 @@ public class ClientController implements Connection.ConnectionHandler {
         this.loginMessage = loginMessage;
     }
 
+    //TODO: display meaningful message
     private BroadcastReceiver connectivityListener = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, "Received connectivity change");
+
             LogsActivity.addMessage(context.getString(R.string.status_connectivity_change));
+            if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
+                Log.i(TAG, "No connectivity (EXTRA_NO_CONNECTIVITY)");
+            }
+
+            String reason = intent.getStringExtra(ConnectivityManager.EXTRA_REASON);
+            if (reason != null) {
+                Log.i(TAG, "Reason: " + reason);
+            }
+            boolean isFailover = intent.getBooleanExtra(ConnectivityManager.EXTRA_IS_FAILOVER, false);
+            if (isFailover) {
+                Log.i(TAG, "This is a failover ");
+            }
+            Log.i(TAG, "EXTRA_EXTRA_INFO: " + intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO));
+
             /*if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
                 handler.removeCallbacksAndMessages(null);
             } else {
