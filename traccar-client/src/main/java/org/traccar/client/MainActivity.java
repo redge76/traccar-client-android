@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
         sharedPreferences.registerOnSharedPreferenceChangeListener(
                 preferenceChangeListener);
 
-        LogsActivity.addMessage("Starting traccar");
+        LogsActivity.addMessage("Starting traccar", "Service is " + (sharedPreferences.getBoolean(getString(R.string.pref_key_status), false)));
 
 
     }

@@ -15,6 +15,7 @@
  */
 package org.traccar.client;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
 import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -174,9 +176,7 @@ public class TraccarService extends Service {
             Message = Message.substring(0, index);
         }
 
-
         prefEditor = sharedPreferences.edit();
-
 
         if (Message.compareTo(getString(R.string.sms_command_pos)) == 0) {
             if (lastLocation == null) {
@@ -255,8 +255,8 @@ public class TraccarService extends Service {
         //wakeLock.release();
     }
 
-//    @TargetApi(Build.VERSION_CODES.ECLAIR)
-//    public double getBatteryLevel() {
+    @TargetApi(Build.VERSION_CODES.ECLAIR)
+    public double getBatteryLevel() {
 //        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.ECLAIR) {
 //            Intent batteryIntent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
 //            int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, 0);
@@ -265,7 +265,8 @@ public class TraccarService extends Service {
 //        } else {
 //            return 0;
 //        }
-//    }
+        return 0;
+    }
 
     private PositionProvider.PositionListener positionListener = new PositionProvider.PositionListener() {
 
@@ -280,9 +281,9 @@ public class TraccarService extends Service {
 //                            getString(R.string.sms_pos_time), getString(R.string.sms_pos_values)));
 //                }
 //
-//                if (inetTracking) {
-//                    clientController.setNewLocation(Protocol.createLocationMessage(extended, location, getBatteryLevel()));
-//                }
+                if (inetTracking) {
+                    clientController.setNewLocation(Protocol.createLocationMessage(extended, location, getBatteryLevel()));
+                }
             }
         }
 

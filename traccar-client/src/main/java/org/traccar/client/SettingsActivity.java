@@ -33,6 +33,10 @@ import android.view.MenuItem;
 /**
  * Main user interface
  */
+
+//TODO: switch to PreferenceFragments http://alvinalexander.com/android/android-tutorial-preferencescreen-preferenceactivity-preferencefragment https://zestedesavoir.com/tutoriels/278/aller-plus-loin-dans-le-developpement-android/323/fragmenter-vos-projets/1849/preferencefragment/
+
+
 @SuppressWarnings("deprecation")
 public class SettingsActivity extends PreferenceActivity {
 

@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory
+        android:title="@string/pref_cat_service"
+        android:key="pref_cat_service">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="status"
+            android:summaryOff="@string/settings_status_off_summary"
+            android:summaryOn="@string/settings_status_on_summary"
+            android:title="@string/settings_status_title" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_cat_tracking"
                         android:key="pref_cat_tracking">
         <EditTextPreference
@@ -91,15 +101,6 @@
                 android:summary="@string/settings_battery_summary"
                 android:title="@string/settings_battery_title" />
 
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_cat_service"
-                        android:key="pref_cat_service" >
-        <CheckBoxPreference
-                android:defaultValue="false"
-                android:key="status"
-                android:summaryOff="@string/settings_status_off_summary"
-                android:summaryOn="@string/settings_status_on_summary"
-                android:title="@string/settings_status_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>
