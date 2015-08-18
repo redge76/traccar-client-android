@@ -22,6 +22,8 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.util.Date;
+
 public class TrackingController implements PositionProvider.PositionListener, NetworkManager.NetworkHandler {
 
     private static final String TAG = TrackingController.class.getSimpleName();
@@ -44,6 +46,8 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
     private void lock() {
         wakeLock.acquire(WAKE_LOCK_TIMEOUT);
     }
+
+    private Date lastTime;
 
     private void unlock() {
         if (wakeLock.isHeld()) {
@@ -181,10 +185,26 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                 Integer.parseInt(preferences.getString(MainActivity.KEY_PORT, null)),
                 position);
 
+        if (lastTime) {
+            SmsRequestManager.sendRequestAsync(request, new SmsRequestManager.RequestHandler() {
+                @Override
+                public void onSuccess() {
+                    lastTime = position.getTime();
+
+                }
+
+                @Override
+                public void onFailure() {
+                    StatusActivity.addMessage(context.getString(R.string.status_send_fail));
+                    retry();
+                }
+            });
+        }
         RequestManager.sendRequestAsync(request, new RequestManager.RequestHandler() {
             @Override
             public void onSuccess() {
                 delete(position);
+                lastTime = position.getTime();
                 unlock();
             }
 
