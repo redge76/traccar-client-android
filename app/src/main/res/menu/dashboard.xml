@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="org.traccar.client.DashboardActivity">
+
+    <item
+        android:id="@+id/settings_item"
+        android:title="@string/menu_settings"
+        android:showAsAction="always" />
+    <item
+        android:id="@+id/logs_item"
+        android:title="@string/menu_logs"
+        android:showAsAction="always" />
+    <item
+        android:id="@+id/about_item"
+        android:title="@string/menu_about"
+        android:showAsAction="ifRoom" />
+</menu>

@@ -39,5 +39,6 @@
     <string name="status_send_fail">Slanje neuspešno</string>
     <string name="status_location_update">Ažuriranje lokacije</string>
     <string name="status_connectivity_change">Promenjena konekcija</string>
+    <string name="dashboardactivity_id_textView">ID</string>
 
 </resources>

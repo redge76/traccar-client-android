@@ -67,6 +67,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         databaseHelper = new DatabaseHelper(context);
         networkManager = new NetworkManager(context, this);
         isOnline = networkManager.isOnline();
+        noSendTimeLimit = new Date();
 
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());

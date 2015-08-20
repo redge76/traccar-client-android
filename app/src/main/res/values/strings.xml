@@ -46,6 +46,16 @@
     <string name="settings_sms_tracking_status_title">SMS tracking</string>
     <string name="ssettings_sms_tracking_status_off_summary">Send SMS</string>
     <string name="settings_sms_tracking_status_on_summary">No SMS</string>
+    <string name="title_activity_entry">EntryActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="status" />
+    <string name="dashboardactivity_id_textView">ID</string>
+    <string name="dashboardactivity_status_textView">Status</string>
+    <string name="menu_logs">Status</string>
+    <string name="menu_settings">Settings</string>
 
 
 </resources>

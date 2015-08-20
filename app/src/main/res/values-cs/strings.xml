@@ -39,5 +39,6 @@
     <string name="status_send_fail">Odesílání selhalo</string>
     <string name="status_location_update">Aktualizace pozice</string>
     <string name="status_connectivity_change">Změna připojení</string>
+    <string name="dashboardactivity_id_textView">ID</string>
 
 </resources>

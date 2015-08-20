@@ -39,5 +39,6 @@
     <string name="status_send_fail">Send fejl</string>
     <string name="status_location_update">Placering opdateret</string>
     <string name="status_connectivity_change">Connectivity forandring</string>
+    <string name="dashboardactivity_id_textView">ID</string>
 
 </resources>
