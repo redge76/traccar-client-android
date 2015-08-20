@@ -54,11 +54,6 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         addPreferencesFromResource(R.xml.preferences);
         initPreferences();
 
-        // DELME
-        if (PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_PROVIDER, null).equals("mixed")) {
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putString(KEY_PROVIDER, LocationManager.GPS_PROVIDER).commit();
-        }
-
         if (getPreferenceScreen().getSharedPreferences().getBoolean(KEY_STATUS, false)) {
             setPreferencesEnabled(false);
             startService(new Intent(this, TrackingService.class));
@@ -142,9 +137,11 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         String KEY_SHOWN_PORT_DIALOG = "portDialogHasBeenShown";
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if (!firstLaunch) {
-            if (!preferences.contains(KEY_SHOWN_PORT_DIALOG)) {
-                showDialog(0);
+        if (!preferences.getString(KEY_PORT, "5055").equals("5055")) {
+            if (!firstLaunch) {
+                if (!preferences.contains(KEY_SHOWN_PORT_DIALOG)) {
+                    showDialog(0);
+                }
             }
         }
 
