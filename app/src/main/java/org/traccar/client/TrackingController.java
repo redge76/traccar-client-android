@@ -47,7 +47,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         wakeLock.acquire(WAKE_LOCK_TIMEOUT);
     }
 
-    private Date lastTime;
+    private Date noSendTimeLimit;
 
     private void unlock() {
         if (wakeLock.isHeld()) {
@@ -185,12 +185,11 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                 Integer.parseInt(preferences.getString(MainActivity.KEY_PORT, null)),
                 position);
 
-        if (lastTime) {
+        if (position.getTime().after(noSendTimeLimit) && preferences.getBoolean(MainActivity.KEY_SMS_TRACKING_STATUS, false) ) {
             SmsRequestManager.sendRequestAsync(request, new SmsRequestManager.RequestHandler() {
                 @Override
                 public void onSuccess() {
-                    lastTime = position.getTime();
-
+                    noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
                 }
 
                 @Override
@@ -204,7 +203,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
             @Override
             public void onSuccess() {
                 delete(position);
-                lastTime = position.getTime();
+                noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
                 unlock();
             }
 

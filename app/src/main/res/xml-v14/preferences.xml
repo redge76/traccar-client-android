@@ -48,4 +48,28 @@
         android:summary="@string/settings_foreground_summary"
         android:title="@string/settings_foreground_title" />
 
+    <PreferenceScreen android:title="@string/pref_screen_tracking_sms"
+        android:key="pref_screen_tracking_sms">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="sms_tracking_status"
+            android:summaryOff="@string/ssettings_sms_tracking_status_off_summary"
+            android:summaryOn="@string/settings_sms_tracking_status_on_summary"
+            android:title="@string/settings_sms_tracking_status_title" />
+
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="sms_tracking_number"
+            android:numeric="integer"
+            android:summary="@string/settings_tracking_sms_number_summary"
+            android:title="@string/settings_tracking_sms_number_title" />
+
+        <EditTextPreference
+            android:defaultValue="120"
+            android:key="no_send_time_limit"
+            android:numeric="integer"
+            android:summary="@string/settings_tracking_sms_number_summary"
+            android:title="@string/settings_tracking_sms_number_title" />
+    </PreferenceScreen>
+
 </PreferenceScreen>

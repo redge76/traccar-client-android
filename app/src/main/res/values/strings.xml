@@ -38,5 +38,13 @@
     <string name="status_send_fail">Send failed</string>
     <string name="status_location_update">Location update</string>
     <string name="status_connectivity_change">Connectivity change</string>
+    <string name="pref_screen_tracking_sms">SMS tracking</string>
+    <string name="settings_tracking_sms_number_summary">Traccar SMS number</string>
+    <string name="settings_tracking_sms_number_title">SMS number</string>
+    <string name="settings_sms_tracking_tracking_title">SMS tracking</string>
+    <string name="settings_sms_tracking_status_title">SMS tracking</string>
+    <string name="ssettings_sms_tracking_status_off_summary">Send SMS</string>
+    <string name="settings_sms_tracking_status_on_summary">No SMS</string>
+
 
 </resources>
