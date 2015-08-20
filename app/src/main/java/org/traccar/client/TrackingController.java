@@ -190,7 +190,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                 position);
 
         if (position.getTime().after(noSendTimeLimit) && preferences.getBoolean(MainActivity.KEY_SMS_TRACKING_STATUS, false) ) {
-            SmsRequestManager.sendRequestAsync(request, new SmsRequestManager.RequestHandler() {
+            SmsRequestManager.sendRequestAsync(context, request, new SmsRequestManager.RequestHandler() {
                 @Override
                 public void onSuccess() {
                     noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
