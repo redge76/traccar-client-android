@@ -52,8 +52,8 @@ public class SmsRequestManager {
         }
 
         @Override
-        protected Boolean doInBackground(String... request) {
-            return sendRequest(context, request[0]);
+        protected Boolean doInBackground(String... arg) {
+            return sendRequest(context, arg[0], arg[1]);
         }
 
         @Override
@@ -66,9 +66,9 @@ public class SmsRequestManager {
         }
     }
 
-    public static boolean sendRequest(Context context, String request) {
-        String phoneNumber = "9999999999";
-        String smsBody = "This is an SMS!";
+    public static boolean sendRequest(Context context, String destNumber, String message) {
+        String phoneNumber = destNumber;
+        String smsBody = message;
 
         String SMS_SENT = "SMS_SENT";
         String SMS_DELIVERED = "SMS_DELIVERED";
@@ -121,9 +121,9 @@ public class SmsRequestManager {
         return true;
     }
 
-    public static void sendRequestAsync(Context context, String request, RequestHandler handler) {
+    public static void sendRequestAsync(Context context,String number, String message, RequestHandler handler) {
         RequestAsyncTask task = new RequestAsyncTask(context, handler);
-        task.execute(request);
+        task.execute(new String[]{number, message});
     }
 
 }

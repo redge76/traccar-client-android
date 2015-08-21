@@ -67,7 +67,18 @@ public class TrackingService extends Service {
 
             startForeground(NOTIFICATION_ID, notification);
         }
+        String action = intent.getStringExtra("action");
+        switch (action) {
+            case "send_sms":
+                trackingController.sendSms();
+                break;
+            default:
+                Log.e(TAG, "no action");
+                break;
+        }
     }
+
+
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
     @Override

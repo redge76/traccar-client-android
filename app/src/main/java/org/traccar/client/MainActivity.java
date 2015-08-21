@@ -43,7 +43,7 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
     public static final String KEY_FOREGROUND = "foreground";
     public static final String KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT = "sms_tracking_no_send_time_limit" ;
     public static final String KEY_SMS_TRACKING_STATUS = "sms_tracking_status" ;
-    public static final String KEY_SMS_TRACKING_NUMBER = "sms_tracking_status" ;
+    public static final String KEY_SMS_TRACKING_NUMBER = "sms_tracking_number" ;
 
     private boolean firstLaunch; // DELME
 
@@ -95,6 +95,10 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
             }
         } else if (key.equals(KEY_DEVICE)) {
             findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
+        }  else if (key.equals(KEY_SMS_TRACKING_NUMBER)) {
+            findPreference(KEY_SMS_TRACKING_NUMBER).setSummary(sharedPreferences.getString(KEY_SMS_TRACKING_NUMBER, null));
+        }else if (key.equals(KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT)) {
+            findPreference(KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT).setSummary(sharedPreferences.getString(KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null));
         }
     }
 
@@ -128,6 +132,9 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
             sharedPreferences.edit().putString(KEY_DEVICE, id).commit();
         }
         findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, id));
+        findPreference(KEY_SMS_TRACKING_NUMBER).setSummary(sharedPreferences.getString(KEY_SMS_TRACKING_NUMBER,""));
+        findPreference(KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT).setSummary(sharedPreferences.getString(KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT,""));
+
     }
 
     // TEMPORARY PORT CHANGE DIALOG (DELME)

@@ -47,5 +47,12 @@
 
     </LinearLayout>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send SMS"
+        android:id="@+id/send_sms_Button"
+        android:layout_gravity="center_horizontal" />
+
 
 </LinearLayout>

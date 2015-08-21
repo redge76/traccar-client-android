@@ -10,6 +10,8 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -21,6 +23,7 @@ public class DashboardActivity extends Activity {
     private TextView statusTextView;
     private EditText idEditText;
     private EditText statusEditText;
+    private Button smsButton;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -33,14 +36,25 @@ public class DashboardActivity extends Activity {
 
         idEditText = (EditText) findViewById(R.id.mainactivity_id_EditText);
         statusEditText = (EditText) findViewById(R.id.mainactivity_status_EditText);
+        smsButton = (Button) findViewById(R.id.send_sms_Button);
 
         idEditText.setText(sharedPreferences.getString(MainActivity.KEY_DEVICE, "N/A"));
         statusEditText.setText(Boolean.toString(sharedPreferences.getBoolean(MainActivity.KEY_STATUS, false)));
         sharedPreferences.registerOnSharedPreferenceChangeListener(
                 preferenceChangeListener);
-
+        smsButton.setOnClickListener(handleSmsClick);
         StatusActivity.addMessage("Starting traccar");
     }
+
+
+    private View.OnClickListener handleSmsClick = new View.OnClickListener() {
+        public void onClick(View arg0) {
+            Intent mServiceIntent;
+            mServiceIntent = new Intent(DashboardActivity.this, TrackingService.class);
+            mServiceIntent.putExtra("action","send_sms");
+            DashboardActivity.this.startService(mServiceIntent);
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -88,4 +102,6 @@ public class DashboardActivity extends Activity {
             sharedPreferences.edit().putString(MainActivity.KEY_DEVICE, id).commit();
         }
     }
+
+
 }

@@ -66,7 +66,7 @@
 
         <EditTextPreference
             android:defaultValue="120"
-            android:key="no_send_time_limit"
+            android:key="sms_tracking_no_send_time_limit"
             android:numeric="integer"
             android:summary="@string/settings_tracking_sms_number_summary"
             android:title="@string/settings_tracking_sms_number_title" />

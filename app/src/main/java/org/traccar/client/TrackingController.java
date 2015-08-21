@@ -190,8 +190,8 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                 Integer.parseInt(preferences.getString(MainActivity.KEY_PORT, null)),
                 position);
 
-        if (position.getTime().after(noSendTimeLimit) && preferences.getBoolean(MainActivity.KEY_SMS_TRACKING_STATUS, false) ) {
-            SmsRequestManager.sendRequestAsync(context, request, new SmsRequestManager.RequestHandler() {
+        if (position.getTime().after(noSendTimeLimit) && preferences.getBoolean(MainActivity.KEY_SMS_TRACKING_STATUS, false)) {
+            SmsRequestManager.sendRequestAsync(context, "0796281978", "test timeout", new SmsRequestManager.RequestHandler() {
                 @Override
                 public void onSuccess() {
                     noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
@@ -233,4 +233,17 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         }, RETRY_DELAY);
     }
 
+    public void sendSms() {
+        SmsRequestManager.sendRequestAsync(context,"0796281978", "test", new SmsRequestManager.RequestHandler() {
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "SMS send OK");
+            }
+
+            @Override
+            public void onFailure() {
+                Log.d(TAG, "SMS send BAD");
+            }
+        });
+    }
 }

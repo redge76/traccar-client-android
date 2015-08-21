@@ -44,8 +44,8 @@
     <string name="settings_tracking_sms_number_title">SMS number</string>
     <string name="settings_sms_tracking_tracking_title">SMS tracking</string>
     <string name="settings_sms_tracking_status_title">SMS tracking</string>
-    <string name="ssettings_sms_tracking_status_off_summary">Send SMS</string>
-    <string name="settings_sms_tracking_status_on_summary">No SMS</string>
+    <string name="ssettings_sms_tracking_status_off_summary">No SMS</string>
+    <string name="settings_sms_tracking_status_on_summary">Send SMS</string>
     <string name="title_activity_entry">EntryActivity</string>
 
     <string name="hello_world">Hello world!</string>
