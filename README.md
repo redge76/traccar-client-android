@@ -1,4 +1,4 @@
-# [Traccar Client for Android](https://www.traccar.org/client)
+# [Traccar Client for Android  with SMS support](https://www.traccar.org/client)
 
 ## Contacts
 
