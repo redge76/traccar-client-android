@@ -63,15 +63,7 @@ public class TrackingService extends Service {
 
             startForeground(notificationId, notification);
         }
-        String action = intent.getStringExtra("action");
-        switch (action) {
-            case "send_sms":
-                trackingController.sendSms();
-                break;
-            default:
-                Log.e(TAG, "no action");
-                break;
-        }
+
     }
 
     @Override
@@ -86,6 +78,15 @@ public class TrackingService extends Service {
             AutostartReceiver.completeWakefulIntent(intent);
         }
 
+        String action = intent.getStringExtra("action");
+        switch (action) {
+            case "send_sms":
+                trackingController.sendSms();
+                break;
+            default:
+                Log.e(TAG, "no action");
+                break;
+        }
     }
 
 
