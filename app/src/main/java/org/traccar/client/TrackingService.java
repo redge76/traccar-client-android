@@ -81,7 +81,7 @@ public class TrackingService extends Service {
         String action = intent.getStringExtra("action");
         switch (action) {
             case "send_sms":
-                trackingController.sendSms();
+                trackingController.sendLatestPositionbySms();
                 break;
             default:
                 Log.e(TAG, "no action");

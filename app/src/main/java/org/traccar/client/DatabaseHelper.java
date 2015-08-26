@@ -23,15 +23,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
+    private static final String TAG = DatabaseHelper.class.getSimpleName();
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "traccar.db";
 
     public interface DatabaseHandler<T> {
         void onSuccess(T result);
+
         void onFailure(RuntimeException error);
     }
 
@@ -84,7 +87,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "altitude REAL," +
                 "speed REAL," +
                 "course REAL," +
-                "battery REAL)");
+                "battery REAL," +
+                "sent INTEGER)");
     }
 
     @Override
@@ -103,7 +107,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put("speed", position.getSpeed());
         values.put("course", position.getCourse());
         values.put("battery", position.getBattery());
-
+        values.put("sent", 0);
         db.insertOrThrow("position", null, values);
     }
 
@@ -117,48 +121,86 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }.execute();
     }
 
-    public Position selectPosition() {
-        Position position = new Position();
+    public ArrayList<Position> selectPositions(boolean all, int number) {
+        Cursor cursor;
+        ArrayList<Position> positions = new ArrayList<Position>();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM position ORDER BY id LIMIT 1", null);
+        if (all) {
+            cursor = db.rawQuery("SELECT * FROM position WHERE sent = 0 ORDER BY id LIMIT ?", new String[]{Integer.toString(number)});
+        } else {
+            cursor = db.rawQuery("SELECT * FROM position WHERE sent = 0 ORDER BY id LIMIT ?", new String[]{Integer.toString(number)});
+        }
         try {
             if (cursor.getCount() > 0) {
-
-                cursor.moveToFirst();
-
-                position.setId(cursor.getLong(cursor.getColumnIndex("id")));
-                position.setDeviceId(cursor.getString(cursor.getColumnIndex("deviceId")));
-                position.setTime(new Date(cursor.getLong(cursor.getColumnIndex("time"))));
-                position.setLatitude(cursor.getDouble(cursor.getColumnIndex("latitude")));
-                position.setLongitude(cursor.getDouble(cursor.getColumnIndex("longitude")));
-                position.setAltitude(cursor.getDouble(cursor.getColumnIndex("altitude")));
-                position.setSpeed(cursor.getDouble(cursor.getColumnIndex("speed")));
-                position.setCourse(cursor.getDouble(cursor.getColumnIndex("course")));
-                position.setBattery(cursor.getDouble(cursor.getColumnIndex("battery")));
-
-            } else {
-                return null;
+                while (cursor.moveToNext()) {
+                    Position position = new Position();
+                    position.setId(cursor.getLong(cursor.getColumnIndex("id")));
+                    position.setDeviceId(cursor.getString(cursor.getColumnIndex("deviceId")));
+                    position.setTime(new Date(cursor.getLong(cursor.getColumnIndex("time"))));
+                    position.setLatitude(cursor.getDouble(cursor.getColumnIndex("latitude")));
+                    position.setLongitude(cursor.getDouble(cursor.getColumnIndex("longitude")));
+                    position.setAltitude(cursor.getDouble(cursor.getColumnIndex("altitude")));
+                    position.setSpeed(cursor.getDouble(cursor.getColumnIndex("speed")));
+                    position.setCourse(cursor.getDouble(cursor.getColumnIndex("course")));
+                    position.setBattery(cursor.getDouble(cursor.getColumnIndex("battery")));
+                    positions.add(position);
+                }
             }
         } finally {
             cursor.close();
         }
+        return positions;
+    }
 
-        return position;
+    public Position selectPosition(boolean all, int number) {
+        ArrayList<Position> positions = selectPositions(false, 1);
+        if (positions.size() > 0) {
+            return selectPositions(all, number).get(1);
+        } else {
+            return null;
+        }
+    }
+
+    public void selectLatestPositionAsync(DatabaseHandler<Position> handler) {
+        new DatabaseAsyncTask<Position>(handler) {
+            @Override
+            protected Position executeMethod() {
+                return selectPosition(true, 1);
+            }
+        }.execute();
+    }
+
+    public void selectPositionsAsync(DatabaseHandler<ArrayList<Position>> handler) {
+        new DatabaseAsyncTask<ArrayList<Position>>(handler) {
+            @Override
+            protected ArrayList<Position> executeMethod() {
+                return selectPositions(false, 1);
+            }
+        }.execute();
     }
 
     public void selectPositionAsync(DatabaseHandler<Position> handler) {
         new DatabaseAsyncTask<Position>(handler) {
             @Override
             protected Position executeMethod() {
-                return selectPosition();
+                return selectPosition(false, 1);
             }
         }.execute();
     }
 
-    public void deletePosition(long id) {
-        if (db.delete("position", "id = ?", new String[] { String.valueOf(id) }) != 1) {
+    public void markPositionSent(long id) {
+        ContentValues args = new ContentValues();
+        args.put("sent", "1");
+        if (db.update("position", args, "id = ?", new String[]{String.valueOf(id)}) != 1) {
             throw new SQLException();
         }
+    }
+
+    public void deletePosition(long id) {
+        markPositionSent(id);
+//        if (db.delete("position", "id = ?", new String[]{String.valueOf(id)}) != 1) {
+//            throw new SQLException();
+//        }
     }
 
     public void deletePositionAsync(final long id, DatabaseHandler<Void> handler) {

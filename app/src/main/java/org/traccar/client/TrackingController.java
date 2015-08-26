@@ -233,7 +233,29 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         }, RETRY_DELAY);
     }
 
-    public void sendSms() {
+    private void readLatestPosition() {
+        log("readLatestPosition", null);
+        lock();
+        databaseHelper.selectLatestPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
+            @Override
+            public void onSuccess(Position result) {
+                if (result != null) {
+                    send(result);
+                } else {
+                    isWaiting = true;
+                }
+                unlock();
+            }
+
+            @Override
+            public void onFailure(RuntimeException error) {
+                retry();
+                unlock();
+            }
+        });
+    }
+
+    public void sendLatestPositionbySms() {
         SmsRequestManager.sendRequestAsync(context,"0796281978", "test", new SmsRequestManager.RequestHandler() {
             @Override
             public void onSuccess() {
