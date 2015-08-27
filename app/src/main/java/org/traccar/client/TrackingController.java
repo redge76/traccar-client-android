@@ -129,10 +129,13 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
             @Override
             public void onComplete(boolean success, Void result) {
                 if (success) {
+                    Log.d(TAG, "Position inserted");
                     if (isOnline && isWaiting) {
                         read();
                         isWaiting = false;
                     }
+                } else {
+                    Log.d(TAG, "FAiled position insertion inserted");
                 }
                 unlock();
             }
@@ -145,13 +148,17 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         databaseHelper.selectPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
             @Override
             public void onComplete(boolean success, Position result) {
+                Log.d(TAG,"Selection completed" );
                 if (success) {
+                    Log.d(TAG,"Selection success" );
                     if (result != null) {
+                        Log.d(TAG,"Calling send" );
                         send(result);
                     } else {
                         isWaiting = true;
                     }
                 } else {
+                    Log.d(TAG,"Retrying the selection" );
                     retry();
                 }
                 unlock();
@@ -201,10 +208,12 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
             @Override
             public void onComplete(boolean success) {
                 if (success) {
+                    Log.d(TAG, "position sucessfully sent");
                     delete(position);
                     noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
 
                 } else {
+                    Log.d(TAG, "Send() error while sending position");
                     retry();
                 }
                 unlock();

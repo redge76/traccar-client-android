@@ -50,7 +50,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="title_activity_dashboard">Traccar</string>
     <string name="status" />
     <string name="dashboardactivity_id_textView">ID</string>
     <string name="dashboardactivity_status_textView">Status</string>

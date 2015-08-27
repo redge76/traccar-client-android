@@ -22,6 +22,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             try {
                 return executeMethod();
             } catch (RuntimeException error) {
+                Log.e(TAG, "eorrrrrrrrrrrrrrorrr" + error.getStackTrace()[0].getLineNumber() + "\n", error);
                 this.error = error;
                 return null;
             }
@@ -147,9 +149,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public Position selectPosition(boolean all, int number) {
-        ArrayList<Position> positions = selectPositions(false, 1);
+        ArrayList<Position> positions = selectPositions(all, number);
         if (positions.size() > 0) {
-            return selectPositions(all, number).get(1);
+            return positions.get(0);
         } else {
             return null;
         }

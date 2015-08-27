@@ -16,6 +16,7 @@
 package org.traccar.client;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class RequestManager {
+
+    private static final String TAG = DatabaseHelper.class.getSimpleName();
 
     private static final int TIMEOUT = 15 * 1000;
 
@@ -61,6 +64,7 @@ public class RequestManager {
             while (inputStream.read() != -1) ;
             return true;
         } catch (IOException error) {
+            Log.e(TAG, "sendRequest ioexception ",error);
             return false;
         } finally {
             try {
