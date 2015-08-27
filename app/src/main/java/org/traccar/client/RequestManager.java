@@ -58,7 +58,7 @@ public class RequestManager {
             connection.setConnectTimeout(TIMEOUT);
             connection.connect();
             inputStream = connection.getInputStream();
-            while (inputStream.read() != -1);
+            while (inputStream.read() != -1) ;
             return true;
         } catch (IOException error) {
             return false;

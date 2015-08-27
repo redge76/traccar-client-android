@@ -56,6 +56,10 @@
     <string name="dashboardactivity_status_textView">Status</string>
     <string name="menu_logs">Status</string>
     <string name="menu_settings">Settings</string>
+    <string name="settings_sms_tracking_number_title">SMS send period</string>
+    <string name="settings_sms_tracking_number_summary">every seconds</string>
+    <string name="settings_sms_tracking_send_time_limit_title">max time before sending SMS</string>
+    <string name="settings_sms_tracking_send_time_limit_summary">in second</string>
 
 
 </resources>

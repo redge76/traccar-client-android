@@ -61,15 +61,22 @@
             android:defaultValue=""
             android:key="sms_tracking_number"
             android:numeric="integer"
-            android:summary="@string/settings_tracking_sms_number_summary"
-            android:title="@string/settings_tracking_sms_number_title" />
+            android:summary="@string/settings_sms_tracking_number_summary"
+            android:title="@string/settings_sms_tracking_number_title" />
 
         <EditTextPreference
             android:defaultValue="120"
             android:key="sms_tracking_no_send_time_limit"
             android:numeric="integer"
-            android:summary="@string/settings_tracking_sms_number_summary"
-            android:title="@string/settings_tracking_sms_number_title" />
+            android:summary="@string/settings_sms_tracking_send_time_limit_summary"
+            android:title="@string/settings_sms_tracking_send_time_limit_title" />
+
+        <EditTextPreference
+            android:defaultValue="120"
+            android:key="sms_tracking_period"
+            android:numeric="integer"
+            android:summary="@string/settings_sms_tracking_number_summary"
+            android:title="@string/settings_sms_tracking_number_title" />
     </PreferenceScreen>
 
 </PreferenceScreen>

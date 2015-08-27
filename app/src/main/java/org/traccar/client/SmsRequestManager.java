@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -32,13 +33,12 @@ import java.net.URL;
 
 public class SmsRequestManager {
 
+    private static final String TAG = SmsRequestManager.class.getSimpleName();
+
     private static final int TIMEOUT = 15 * 1000;
 
-
-
     public interface RequestHandler {
-        void onSuccess();
-        void onFailure();
+        void onComplete(boolean success);
     }
 
     private static class RequestAsyncTask extends AsyncTask<String, Void, Boolean> {
@@ -58,11 +58,7 @@ public class SmsRequestManager {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if (result) {
-                handler.onSuccess();
-            } else {
-                handler.onFailure();
-            }
+            handler.onComplete(result);
         }
     }
 
@@ -116,7 +112,8 @@ public class SmsRequestManager {
 // Get the default instance of SmsManager
         SmsManager smsManager = SmsManager.getDefault();
 // Send a text based SMS
-        smsManager.sendTextMessage(phoneNumber, null, smsBody, sentPendingIntent, deliveredPendingIntent);
+        Log.i(TAG, "Sending SMS");
+        //smsManager.sendTextMessage(phoneNumber, null, smsBody, sentPendingIntent, deliveredPendingIntent);
 
         return true;
     }

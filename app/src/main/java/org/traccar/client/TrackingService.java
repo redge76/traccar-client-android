@@ -76,15 +76,16 @@ public class TrackingService extends Service {
         if (intent != null) {
             AutostartReceiver.completeWakefulIntent(intent);
         }
-
         String action = intent.getStringExtra("action");
-        switch (action) {
-            case "send_sms":
-                trackingController.sendLatestPositionbySms();
-                break;
-            default:
-                Log.e(TAG, "no action");
-                break;
+        if ( action != null) {
+            switch (action) {
+                case "send_sms":
+                    trackingController.sendLatestPositionbySms();
+                    break;
+                default:
+                    Log.e(TAG, "no action");
+                    break;
+            }
         }
     }
 

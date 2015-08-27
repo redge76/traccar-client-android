@@ -44,6 +44,7 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
     public static final String KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT = "sms_tracking_no_send_time_limit" ;
     public static final String KEY_SMS_TRACKING_STATUS = "sms_tracking_status" ;
     public static final String KEY_SMS_TRACKING_NUMBER = "sms_tracking_number" ;
+    public static final String KEY_SMS_TRACKING_PERIOD = "sms_tracking_period" ;
 
     private boolean firstLaunch; // DELME
 

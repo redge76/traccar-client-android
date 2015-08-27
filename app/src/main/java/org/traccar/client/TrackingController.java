@@ -186,14 +186,14 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         if (position.getTime().after(noSendTimeLimit) && preferences.getBoolean(MainActivity.KEY_SMS_TRACKING_STATUS, false)) {
             SmsRequestManager.sendRequestAsync(context, "0796281978", "test timeout", new SmsRequestManager.RequestHandler() {
                 @Override
-                public void onSuccess() {
-                    noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
-                }
-
-                @Override
-                public void onFailure() {
-                    StatusActivity.addMessage(context.getString(R.string.status_send_fail));
-                    retry();
+                public void onComplete(boolean success) {
+                    if (success) {
+                        noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
+                    } else {
+                        StatusActivity.addMessage(context.getString(R.string.status_send_fail));
+                        retry();
+                    }
+                    unlock();
                 }
             });
         }
@@ -228,35 +228,47 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         log("readLatestPosition", null);
         lock();
         databaseHelper.selectLatestPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
-            @Override
-            public void onSuccess(Position result) {
-                if (result != null) {
-                    send(result);
+            public void onComplete(boolean success, Position result) {
+                if (success) {
+                    if (result != null) {
+                        send(result);
+                    } else {
+                        isWaiting = true;
+                    }
                 } else {
-                    isWaiting = true;
+                    retry();
                 }
-                unlock();
-            }
-
-            @Override
-            public void onFailure(RuntimeException error) {
-                retry();
                 unlock();
             }
         });
     }
 
     public void sendLatestPositionbySms() {
-        SmsRequestManager.sendRequestAsync(context,"0796281978", "test", new SmsRequestManager.RequestHandler() {
-            @Override
-            public void onSuccess() {
-                Log.d(TAG, "SMS send OK");
-            }
+        SmsRequestManager.sendRequestAsync(context, "0796281978", "test", new SmsRequestManager.RequestHandler() {
+                    @Override
+                    public void onComplete(boolean success) {
+                        if (success) {
+                            Log.d(TAG, "SMS send OK");
+                        } else {
 
+                            Log.d(TAG, "SMS send BAD");
+                        }
+                    }
+                }
+
+        );
+    }
+
+    private void loopSMS() {
+        log("retry", null);
+        handler.postDelayed(new Runnable() {
             @Override
-            public void onFailure() {
-                Log.d(TAG, "SMS send BAD");
+            public void run() {
+                //sendLatestPositionbySms();
+                Log.d(TAG, "sending SMS from loop");
+                handler.postDelayed(this, preferences.getInt(MainActivity.KEY_SMS_TRACKING_PERIOD, 0));
             }
-        });
+        }, preferences.getInt(MainActivity.KEY_SMS_TRACKING_PERIOD, 0));
     }
 }
+
