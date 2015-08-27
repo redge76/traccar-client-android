@@ -63,7 +63,6 @@ public class TrackingService extends Service {
 
             startForeground(notificationId, notification);
         }
-
     }
 
     @Override
@@ -88,8 +87,6 @@ public class TrackingService extends Service {
                 break;
         }
     }
-
-
 
     @TargetApi(Build.VERSION_CODES.ECLAIR)
     @Override
