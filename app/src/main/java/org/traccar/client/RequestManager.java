@@ -55,7 +55,7 @@ public class RequestManager {
     public static boolean sendRequest(String request) {
         InputStream inputStream = null;
         try {
-            Log.i(TAG, "SendRequest() starting" + request);
+            Log.i(TAG, "SendRequest() starting - " + request);
             URL url = new URL(request);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setReadTimeout(TIMEOUT);

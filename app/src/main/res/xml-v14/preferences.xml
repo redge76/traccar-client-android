@@ -6,8 +6,6 @@
         android:key="status"
         android:summaryOff="@string/settings_status_off_summary"
         android:summaryOn="@string/settings_status_on_summary"
-        android:switchTextOff="@string/settings_status_off"
-        android:switchTextOn="@string/settings_status_on"
         android:title="@string/settings_status_title" />
 
     <EditTextPreference
@@ -37,6 +35,13 @@
     <PreferenceCategory
         android:key="pref_cat_http_backend"
         android:title="@string/pref_cat_http_backend">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="http_backend_status"
+            android:summaryOff="@string/settings_http_backend_status_off_summary"
+            android:summaryOn="@string/settings_http_backend_status_on_summary"
+            android:title="@string/settings_http_backend_status_title" />
 
         <EditTextPreference
             android:defaultValue="demo.traccar.org"
@@ -71,7 +76,7 @@
             <SwitchPreference
                 android:defaultValue="false"
                 android:key="sms_backend_status"
-                android:summaryOff="@string/ssettings_sms_backend_status_off_summary"
+                android:summaryOff="@string/settings_sms_backend_status_off_summary"
                 android:summaryOn="@string/settings_sms_backend_status_on_summary"
                 android:title="@string/settings_sms_backend_status_title" />
 

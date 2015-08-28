@@ -78,7 +78,7 @@ public class DashboardActivity extends Activity {
         if (id == R.id.settings_item) {
             startActivity(new Intent(this, MainActivity.class));
             return true;
-        } else if (id == R.id.logs_item) {
+        } else if (id == R.id.status_item) {
             startActivity(new Intent(this, StatusActivity.class));
             return true;
         } else if (id == R.id.about_item) {

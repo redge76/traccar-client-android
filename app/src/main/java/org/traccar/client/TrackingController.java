@@ -15,7 +15,11 @@
  */
 package org.traccar.client;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -23,8 +27,9 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 
-public class TrackingController implements PositionProvider.PositionListener, NetworkManager.NetworkHandler {
+public class TrackingController extends BroadcastReceiver implements PositionProvider.PositionListener, NetworkManager.NetworkHandler {
 
     private static final String TAG = TrackingController.class.getSimpleName();
     private static final int RETRY_DELAY = 30 * 1000;
@@ -243,7 +248,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         databaseHelper.selectLatestPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
             public void onComplete(boolean success, Position result) {
                 if (success) {
-                    Log.d(TAG,"smsReadLatestPosition(): position selected");
+                    Log.d(TAG, "smsReadLatestPosition(): position selected");
                     if (result != null) {
                         sendLatestPositionbySms(result);
                     }
@@ -257,7 +262,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
 
     public void sendLatestPositionbySms(Position position) {
         String message = SmsProtocolFormatter.formatRequest(position);
-        SmsRequestManager.sendRequestAsync(context, preferences.getString(MainActivity.KEY_SMS_BACKEND_NUMBER, null) , message, new SmsRequestManager.RequestHandler() {
+        SmsRequestManager.sendRequestAsync(context, preferences.getString(MainActivity.KEY_SMS_BACKEND_NUMBER, null), message, new SmsRequestManager.RequestHandler() {
                     @Override
                     public void onComplete(boolean success) {
                         if (success) {
@@ -271,6 +276,16 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         );
     }
 
+    public void scheduleAlarm() {
+        Log.e(TAG, "SCHEDULLLING ALARM ***********");
+        Long time = new GregorianCalendar().getTimeInMillis() + 10*1000;
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intentAlarm = new Intent(context, this.getClass()  );
+        alarmManager.set(AlarmManager.RTC_WAKEUP,time, PendingIntent.getBroadcast(context, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+
+    }
+
     private void loopSMS() {
         log("loopSMS()", null);
         handler.postDelayed(new Runnable() {
@@ -282,6 +297,11 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                 handler.postDelayed(this, preferences.getInt(MainActivity.KEY_SMS_BACKEND_INTERVAL, 0));
             }
         }, preferences.getInt(MainActivity.KEY_SMS_BACKEND_INTERVAL, 0));
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        Log.e(TAG, "ALALLLLLLLLLLLLLLLLLLLLLLRRRRRRRRRRMMMMMMMM");
     }
 }
 

@@ -7,8 +7,8 @@
         android:title="@string/menu_settings"
         android:showAsAction="always" />
     <item
-        android:id="@+id/logs_item"
-        android:title="@string/menu_logs"
+        android:id="@+id/status_item"
+        android:title="@string/menu_status"
         android:showAsAction="always" />
     <item
         android:id="@+id/about_item"

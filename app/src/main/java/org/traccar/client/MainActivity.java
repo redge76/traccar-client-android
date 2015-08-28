@@ -37,7 +37,7 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
     private static final String TAG = MainActivity.class.getSimpleName();
 
     public static final String KEY_DEVICE = "id";
-    public static final String KEY_HTTP_BACKEND_STATUS = "http_tracking_status";
+    public static final String KEY_HTTP_BACKEND_STATUS = "http_backend_status";
     public static final String KEY_ADDRESS = "address";
     public static final String KEY_PORT = "port";
     public static final String KEY_INTERVAL = "interval";
