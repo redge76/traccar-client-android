@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <SwitchPreference
         android:defaultValue="false"
@@ -14,69 +14,88 @@
         android:key="id"
         android:title="@string/settings_id_title" />
 
-    <EditTextPreference
-        android:defaultValue="demo.traccar.org"
-        android:key="address"
-        android:summary="@string/settings_address_summary"
-        android:title="@string/settings_address_title" />
-
-    <EditTextPreference
-        android:defaultValue="5055"
-        android:key="port"
-        android:numeric="integer"
-        android:summary="@string/settings_port_summary"
-        android:title="@string/settings_port_title" />
-
-    <EditTextPreference
-        android:defaultValue="300"
-        android:key="interval"
-        android:numeric="integer"
-        android:summary="@string/settings_interval_summary"
-        android:title="@string/settings_interval_title" />
-
-    <ListPreference
-        android:defaultValue="gps"
-        android:entries="@array/settings_provider_names"
-        android:entryValues="@array/settings_provider_values"
-        android:key="provider"
-        android:summary="@string/settings_provider_summary"
-        android:title="@string/settings_provider_title" />
-
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="foreground"
         android:summary="@string/settings_foreground_summary"
         android:title="@string/settings_foreground_title" />
 
-    <PreferenceScreen android:title="@string/pref_screen_tracking_sms"
-        android:key="pref_screen_tracking_sms">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="sms_tracking_status"
-            android:summaryOff="@string/ssettings_sms_tracking_status_off_summary"
-            android:summaryOn="@string/settings_sms_tracking_status_on_summary"
-            android:title="@string/settings_sms_tracking_status_title" />
+    <PreferenceCategory
+        android:key="pref_cat_gps"
+        android:title="@string/pref_cat_gps">
+
+        <ListPreference
+            android:defaultValue="gps"
+            android:entries="@array/settings_provider_names"
+            android:entryValues="@array/settings_provider_values"
+            android:key="provider"
+            android:summary="@string/settings_provider_summary"
+            android:title="@string/settings_provider_title" />
+
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="pref_cat_http_backend"
+        android:title="@string/pref_cat_http_backend">
 
         <EditTextPreference
-            android:defaultValue=""
-            android:key="sms_tracking_number"
-            android:numeric="integer"
-            android:summary="@string/settings_sms_tracking_number_summary"
-            android:title="@string/settings_sms_tracking_number_title" />
+            android:defaultValue="demo.traccar.org"
+            android:key="address"
+            android:summary="@string/settings_address_summary"
+            android:title="@string/settings_address_title" />
 
         <EditTextPreference
-            android:defaultValue="120"
-            android:key="sms_tracking_no_send_time_limit"
+            android:defaultValue="5055"
+            android:key="port"
             android:numeric="integer"
-            android:summary="@string/settings_sms_tracking_send_time_limit_summary"
-            android:title="@string/settings_sms_tracking_send_time_limit_title" />
+            android:summary="@string/settings_port_summary"
+            android:title="@string/settings_port_title" />
 
         <EditTextPreference
-            android:defaultValue="120"
-            android:key="sms_tracking_period"
+            android:defaultValue="300"
+            android:key="interval"
             android:numeric="integer"
-            android:summary="@string/settings_sms_tracking_number_summary"
-            android:title="@string/settings_sms_tracking_number_title" />
+            android:summary="@string/settings_interval_summary"
+            android:title="@string/settings_interval_title" />
+    </PreferenceCategory>
+
+
+    <PreferenceScreen
+        android:key="pref_screen_tracking_sms"
+        android:title="@string/pref_screen_tracking_sms">
+
+        <PreferenceCategory
+            android:key="pref_cat_sms_backend"
+            android:title="@string/pref_cat_sms_backend">
+
+            <SwitchPreference
+                android:defaultValue="false"
+                android:key="sms_backend_status"
+                android:summaryOff="@string/ssettings_sms_backend_status_off_summary"
+                android:summaryOn="@string/settings_sms_backend_status_on_summary"
+                android:title="@string/settings_sms_backend_status_title" />
+
+            <EditTextPreference
+                android:defaultValue=""
+                android:key="sms_backend_number"
+                android:numeric="integer"
+                android:summary="@string/settings_sms_backend_number_summary"
+                android:title="@string/settings_sms_backend_number_title" />
+
+            <EditTextPreference
+                android:defaultValue="120"
+                android:key="sms_backend_no_send_time_limit"
+                android:numeric="integer"
+                android:summary="@string/settings_sms_backend_send_time_limit_summary"
+                android:title="@string/settings_sms_backend_send_time_limit_title" />
+
+            <EditTextPreference
+                android:defaultValue="120"
+                android:key="sms_backend_period"
+                android:numeric="integer"
+                android:summary="@string/settings_sms_backend_interval_summary"
+                android:title="@string/settings_sms_backend_interval_title" />
+        </PreferenceCategory>
     </PreferenceScreen>
 
 </PreferenceScreen>

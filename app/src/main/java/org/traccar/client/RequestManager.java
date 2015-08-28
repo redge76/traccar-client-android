@@ -55,16 +55,17 @@ public class RequestManager {
     public static boolean sendRequest(String request) {
         InputStream inputStream = null;
         try {
+            Log.i(TAG, "SendRequest() starting" + request);
             URL url = new URL(request);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setReadTimeout(TIMEOUT);
             connection.setConnectTimeout(TIMEOUT);
             connection.connect();
             inputStream = connection.getInputStream();
-            while (inputStream.read() != -1) ;
+            while (inputStream.read() != -1);
             return true;
         } catch (IOException error) {
-            Log.e(TAG, "sendRequest ioexception ",error);
+            Log.e(TAG, "SendRequest() ioexception ", error);
             return false;
         } finally {
             try {
@@ -72,6 +73,7 @@ public class RequestManager {
                     inputStream.close();
                 }
             } catch (IOException secondError) {
+                Log.e(TAG, "SendRequest() error closing inputStream", secondError);
                 return false;
             }
         }

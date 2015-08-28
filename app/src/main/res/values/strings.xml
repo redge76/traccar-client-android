@@ -42,10 +42,10 @@
     <string name="pref_screen_tracking_sms">SMS tracking</string>
     <string name="settings_tracking_sms_number_summary">Traccar SMS number</string>
     <string name="settings_tracking_sms_number_title">SMS number</string>
-    <string name="settings_sms_tracking_tracking_title">SMS tracking</string>
-    <string name="settings_sms_tracking_status_title">SMS tracking</string>
-    <string name="ssettings_sms_tracking_status_off_summary">No SMS</string>
-    <string name="settings_sms_tracking_status_on_summary">Send SMS</string>
+    <string name="settings_sms_backend_tracking_title">SMS tracking</string>
+    <string name="settings_sms_backend_status_title">SMS tracking</string>
+    <string name="ssettings_sms_backend_status_off_summary">No SMS</string>
+    <string name="settings_sms_backend_status_on_summary">Send SMS</string>
     <string name="title_activity_entry">EntryActivity</string>
 
     <string name="hello_world">Hello world!</string>
@@ -56,10 +56,15 @@
     <string name="dashboardactivity_status_textView">Status</string>
     <string name="menu_logs">Status</string>
     <string name="menu_settings">Settings</string>
-    <string name="settings_sms_tracking_number_title">SMS send period</string>
-    <string name="settings_sms_tracking_number_summary">every seconds</string>
-    <string name="settings_sms_tracking_send_time_limit_title">max time before sending SMS</string>
-    <string name="settings_sms_tracking_send_time_limit_summary">in second</string>
+    <string name="settings_sms_backend_number_title">SMS send period</string>
+    <string name="settings_sms_backend_number_summary">every seconds</string>
+    <string name="settings_sms_backend_send_time_limit_title">max time before sending SMS</string>
+    <string name="settings_sms_backend_send_time_limit_summary">in second</string>
+    <string name="pref_cat_gps">GPS</string>
+    <string name="pref_cat_http_backend">HTTP backend</string>
+    <string name="pref_cat_sms_backend">SMS backend</string>
+    <string name="settings_sms_backend_interval_summary">SMS sending period</string>
+    <string name="settings_sms_backend_interval_title">SMS interval in seconds</string>
 
 
 </resources>

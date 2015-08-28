@@ -80,7 +80,7 @@ public class TrackingService extends Service {
         if ( action != null) {
             switch (action) {
                 case "send_sms":
-                    trackingController.sendLatestPositionbySms();
+                    trackingController.smsReadLatestPosition();
                     break;
                 default:
                     Log.e(TAG, "no action");

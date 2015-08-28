@@ -17,17 +17,17 @@ package org.traccar.client;
 
 public class SmsProtocolFormatter {
 
-    public static String formatRequest(String address, int port, Position position) {
+    public static String formatRequest(Position position) {
 
         String message = "position"
-                .concat("id").concat(position.getDeviceId())
-                .concat("timestamp").concat(String.valueOf(position.getTime().getTime() / 1000))
-                .concat("lat").concat(String.valueOf(position.getLatitude()))
-                .concat("lon").concat(String.valueOf(position.getLongitude()))
-                .concat("speed").concat(String.valueOf(position.getSpeed() * 1.943844))
-                .concat("bearing").concat(String.valueOf(position.getCourse()))
-                .concat("altitude").concat(String.valueOf(position.getAltitude()))
-                .concat("batt").concat(String.valueOf(position.getBattery()));
+                .concat(";id=").concat(position.getDeviceId())
+                .concat(";timestamp=").concat(String.valueOf(position.getTime().getTime() / 1000))
+                .concat(";lat=").concat(String.valueOf(position.getLatitude()))
+                .concat(";lon=").concat(String.valueOf(position.getLongitude()))
+                .concat(";speed=").concat(String.valueOf(position.getSpeed() * 1.943844))
+                .concat(";bearing=").concat(String.valueOf(position.getCourse()))
+                .concat(";altitude=").concat(String.valueOf(position.getAltitude()))
+                .concat(";batt=").concat(String.valueOf(position.getBattery()));
 
         return message;
     }

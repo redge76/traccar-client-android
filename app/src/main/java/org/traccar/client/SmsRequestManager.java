@@ -112,7 +112,7 @@ public class SmsRequestManager {
 // Get the default instance of SmsManager
         SmsManager smsManager = SmsManager.getDefault();
 // Send a text based SMS
-        Log.i(TAG, "Sending SMS");
+        Log.i(TAG, "Sending SMS - " + message );
         //smsManager.sendTextMessage(phoneNumber, null, smsBody, sentPendingIntent, deliveredPendingIntent);
 
         return true;

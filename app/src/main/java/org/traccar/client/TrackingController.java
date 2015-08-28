@@ -129,13 +129,13 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
             @Override
             public void onComplete(boolean success, Void result) {
                 if (success) {
-                    Log.d(TAG, "Position inserted");
+                    Log.d(TAG, "write(): Position inserted");
                     if (isOnline && isWaiting) {
                         read();
                         isWaiting = false;
                     }
                 } else {
-                    Log.d(TAG, "FAiled position insertion inserted");
+                    Log.d(TAG, "write(): Failed position insertion");
                 }
                 unlock();
             }
@@ -143,22 +143,21 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
     }
 
     private void read() {
-        log("read", null);
+        log("read():", null);
         lock();
         databaseHelper.selectPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
             @Override
             public void onComplete(boolean success, Position result) {
-                Log.d(TAG,"Selection completed" );
                 if (success) {
-                    Log.d(TAG,"Selection success" );
+                    Log.d(TAG, "read(): Selection success");
                     if (result != null) {
-                        Log.d(TAG,"Calling send" );
+                        Log.d(TAG, "read(): Calling send");
                         send(result);
                     } else {
                         isWaiting = true;
                     }
                 } else {
-                    Log.d(TAG,"Retrying the selection" );
+                    Log.d(TAG, "read(): Retrying the selection");
                     retry();
                 }
                 unlock();
@@ -167,7 +166,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
     }
 
     private void delete(Position position) {
-        log("delete", position);
+        log("delete()", position);
         lock();
         databaseHelper.deletePositionAsync(position.getId(), new DatabaseHelper.DatabaseHandler<Void>() {
             @Override
@@ -189,13 +188,32 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                 preferences.getString(MainActivity.KEY_ADDRESS, null),
                 Integer.parseInt(preferences.getString(MainActivity.KEY_PORT, null)),
                 position);
+        RequestManager.sendRequestAsync(request, new RequestManager.RequestHandler() {
+            @Override
+            public void onComplete(boolean success) {
+                if (success) {
+                    Log.d(TAG, "send(): Position sucessfully sent");
+                    delete(position);
+                    noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_BACKEND_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
 
-        if (position.getTime().after(noSendTimeLimit) && preferences.getBoolean(MainActivity.KEY_SMS_TRACKING_STATUS, false)) {
+                } else {
+                    Log.e(TAG, "Send(): Error while sending position");
+                    retry();
+                }
+                unlock();
+            }
+        });
+    }
+
+    private void sendSms(final Position position) {
+        log("sendSms()", position);
+        lock();
+        if (position.getTime().after(noSendTimeLimit) && preferences.getBoolean(MainActivity.KEY_SMS_BACKEND_STATUS, false)) {
             SmsRequestManager.sendRequestAsync(context, "0796281978", "test timeout", new SmsRequestManager.RequestHandler() {
                 @Override
                 public void onComplete(boolean success) {
                     if (success) {
-                        noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
+                        noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_BACKEND_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
                     } else {
                         StatusActivity.addMessage(context.getString(R.string.status_send_fail));
                         retry();
@@ -204,25 +222,10 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                 }
             });
         }
-        RequestManager.sendRequestAsync(request, new RequestManager.RequestHandler() {
-            @Override
-            public void onComplete(boolean success) {
-                if (success) {
-                    Log.d(TAG, "position sucessfully sent");
-                    delete(position);
-                    noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
-
-                } else {
-                    Log.d(TAG, "Send() error while sending position");
-                    retry();
-                }
-                unlock();
-            }
-        });
     }
 
     private void retry() {
-        log("retry", null);
+        Log.d(TAG, "retry()");
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -233,34 +236,34 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         }, RETRY_DELAY);
     }
 
-    private void readLatestPosition() {
-        log("readLatestPosition", null);
+    public void smsReadLatestPosition() {
+        Log.d(TAG, "smsReadLatestPosition()");
+        Position result;
         lock();
         databaseHelper.selectLatestPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
             public void onComplete(boolean success, Position result) {
                 if (success) {
+                    Log.d(TAG,"smsReadLatestPosition(): position selected");
                     if (result != null) {
-                        send(result);
-                    } else {
-                        isWaiting = true;
+                        sendLatestPositionbySms(result);
                     }
                 } else {
-                    retry();
+                    Log.e(TAG, "smsReadLatestPosition(): Position selection failed");
                 }
                 unlock();
             }
         });
     }
 
-    public void sendLatestPositionbySms() {
-        SmsRequestManager.sendRequestAsync(context, "0796281978", "test", new SmsRequestManager.RequestHandler() {
+    public void sendLatestPositionbySms(Position position) {
+        String message = SmsProtocolFormatter.formatRequest(position);
+        SmsRequestManager.sendRequestAsync(context, preferences.getString(MainActivity.KEY_SMS_BACKEND_NUMBER, null) , message, new SmsRequestManager.RequestHandler() {
                     @Override
                     public void onComplete(boolean success) {
                         if (success) {
-                            Log.d(TAG, "SMS send OK");
+                            Log.d(TAG, "sendLatestPositionbySms(): SMS send OK");
                         } else {
-
-                            Log.d(TAG, "SMS send BAD");
+                            Log.d(TAG, "sendLatestPositionbySms(): SMS send BAD");
                         }
                     }
                 }
@@ -269,15 +272,16 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
     }
 
     private void loopSMS() {
-        log("retry", null);
+        log("loopSMS()", null);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 //sendLatestPositionbySms();
-                Log.d(TAG, "sending SMS from loop");
-                handler.postDelayed(this, preferences.getInt(MainActivity.KEY_SMS_TRACKING_PERIOD, 0));
+                Log.e(TAG, "************** SENDING SMS*****************");
+                Log.d(TAG, "loopSMS(): sending SMS from loop && rescheduling");
+                handler.postDelayed(this, preferences.getInt(MainActivity.KEY_SMS_BACKEND_INTERVAL, 0));
             }
-        }, preferences.getInt(MainActivity.KEY_SMS_TRACKING_PERIOD, 0));
+        }, preferences.getInt(MainActivity.KEY_SMS_BACKEND_INTERVAL, 0));
     }
 }
 

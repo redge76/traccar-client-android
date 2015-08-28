@@ -22,29 +22,32 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends PreferenceActivity implements OnSharedPreferenceChangeListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     public static final String KEY_DEVICE = "id";
+    public static final String KEY_HTTP_BACKEND_STATUS = "http_tracking_status";
     public static final String KEY_ADDRESS = "address";
     public static final String KEY_PORT = "port";
     public static final String KEY_INTERVAL = "interval";
     public static final String KEY_PROVIDER = "provider";
     public static final String KEY_STATUS = "status";
     public static final String KEY_FOREGROUND = "foreground";
-    public static final String KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT = "sms_tracking_no_send_time_limit" ;
-    public static final String KEY_SMS_TRACKING_STATUS = "sms_tracking_status" ;
-    public static final String KEY_SMS_TRACKING_NUMBER = "sms_tracking_number" ;
-    public static final String KEY_SMS_TRACKING_PERIOD = "sms_tracking_period" ;
+    public static final String KEY_SMS_BACKEND_STATUS = "sms_backend_status";
+    public static final String KEY_SMS_BACKEND_NO_SEND_TIME_LIMIT = "sms_backend_no_send_time_limit";
+    public static final String KEY_SMS_BACKEND_NUMBER = "sms_backend_number";
+    public static final String KEY_SMS_BACKEND_INTERVAL = "sms_backend_interval";
 
     private boolean firstLaunch; // DELME
 
@@ -84,22 +87,32 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         preferenceScreen.findPreference(KEY_FOREGROUND).setEnabled(enabled);
     }
 
+    private void updateSummary(SharedPreferences sharedPreferences, String key) {
+        Log.d(TAG, "updateSummary(): Updating summary of " + key);
+        findPreference(key).setSummary(String.valueOf(sharedPreferences.getString(key, "")));
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(KEY_STATUS)) {
-            if (sharedPreferences.getBoolean(KEY_STATUS, false)) {
-                setPreferencesEnabled(false);
-                startService(new Intent(this, TrackingService.class));
-            } else {
-                stopService(new Intent(this, TrackingService.class));
-                setPreferencesEnabled(true);
-            }
-        } else if (key.equals(KEY_DEVICE)) {
-            findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, null));
-        }  else if (key.equals(KEY_SMS_TRACKING_NUMBER)) {
-            findPreference(KEY_SMS_TRACKING_NUMBER).setSummary(sharedPreferences.getString(KEY_SMS_TRACKING_NUMBER, null));
-        }else if (key.equals(KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT)) {
-            findPreference(KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT).setSummary(sharedPreferences.getString(KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT, null));
+        Log.d(TAG, "onSharedPreferenceChanged(): Preferences changed");
+        switch (key) {
+            case KEY_STATUS:
+                if (sharedPreferences.getBoolean(KEY_STATUS, false)) {
+                    setPreferencesEnabled(false);
+                    startService(new Intent(this, TrackingService.class));
+                } else {
+                    stopService(new Intent(this, TrackingService.class));
+                    setPreferencesEnabled(true);
+                }
+                break;
+            case KEY_DEVICE:
+            case KEY_ADDRESS:
+            case KEY_PORT:
+            case KEY_INTERVAL:
+            case KEY_SMS_BACKEND_NUMBER:
+            case KEY_SMS_BACKEND_NO_SEND_TIME_LIMIT:
+                updateSummary(sharedPreferences, key);
+                break;
         }
     }
 
@@ -132,9 +145,14 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         if (!sharedPreferences.contains(KEY_DEVICE)) {
             sharedPreferences.edit().putString(KEY_DEVICE, id).commit();
         }
-        findPreference(KEY_DEVICE).setSummary(sharedPreferences.getString(KEY_DEVICE, id));
-        findPreference(KEY_SMS_TRACKING_NUMBER).setSummary(sharedPreferences.getString(KEY_SMS_TRACKING_NUMBER,""));
-        findPreference(KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT).setSummary(sharedPreferences.getString(KEY_SMS_TRACKING_NO_SEND_TIME_LIMIT,""));
+
+        updateSummary(sharedPreferences, KEY_DEVICE);
+        updateSummary(sharedPreferences, KEY_ADDRESS);
+        updateSummary(sharedPreferences, KEY_PORT);
+        updateSummary(sharedPreferences, KEY_INTERVAL);
+        updateSummary(sharedPreferences, KEY_PROVIDER);
+        updateSummary(sharedPreferences, KEY_SMS_BACKEND_NUMBER);
+        updateSummary(sharedPreferences, KEY_SMS_BACKEND_NO_SEND_TIME_LIMIT);
 
     }
 

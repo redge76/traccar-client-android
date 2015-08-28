@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 public class DashboardActivity extends Activity {
 
-    private static final String TAG = StatusActivity.class.getName();
+    private static final String TAG = DashboardActivity.class.getName();
 
     private TextView idTextView;
     private TextView statusTextView;
@@ -28,9 +28,11 @@ public class DashboardActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(TAG, "Starting the activity");
+        Log.d(TAG, "Starting the traccar dashboard activity");
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.dashboard);
+
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         initPreferences();
 
@@ -40,15 +42,18 @@ public class DashboardActivity extends Activity {
 
         idEditText.setText(sharedPreferences.getString(MainActivity.KEY_DEVICE, "N/A"));
         statusEditText.setText(Boolean.toString(sharedPreferences.getBoolean(MainActivity.KEY_STATUS, false)));
-        sharedPreferences.registerOnSharedPreferenceChangeListener(
-                preferenceChangeListener);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener );
+
         smsButton.setOnClickListener(handleSmsClick);
-        StatusActivity.addMessage("Starting traccar");
+
+        if (sharedPreferences.getBoolean(MainActivity.KEY_STATUS, false)) {
+            startService(new Intent(this, TrackingService.class));
+        }
+
     }
 
-
     private View.OnClickListener handleSmsClick = new View.OnClickListener() {
-        public void onClick(View arg0) {
+        public void onClick(View viewid) {
             Intent mServiceIntent;
             mServiceIntent = new Intent(DashboardActivity.this, TrackingService.class);
             mServiceIntent.putExtra("action","send_sms");
@@ -102,6 +107,5 @@ public class DashboardActivity extends Activity {
             sharedPreferences.edit().putString(MainActivity.KEY_DEVICE, id).commit();
         }
     }
-
 
 }
