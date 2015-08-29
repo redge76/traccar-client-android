@@ -41,6 +41,8 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
     private Context context;
     private Handler handler;
 
+    private SharedPreferences preferences;
+
     private String address;
     private int port;
 
@@ -65,7 +67,7 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
     public TrackingController(Context context) {
         this.context = context;
         handler = new Handler();
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (preferences.getString(MainActivity.KEY_PROVIDER, null).equals("mixed")) {
             positionProvider = new MixedPositionProvider(context, this);
         } else {
@@ -285,8 +287,8 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
         Long time = new GregorianCalendar().getTimeInMillis() + 10*1000;
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intentAlarm = new Intent(context, this.getClass()  );
-        alarmManager.set(AlarmManager.RTC_WAKEUP,time, PendingIntent.getBroadcast(context, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
+        Intent intentAlarm = new Intent(context, this.getClass());
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(context, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
 
     }
 
