@@ -42,6 +42,7 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
     private Handler handler;
 
     private SharedPreferences preferences;
+    private Date noSendTimeLimit;
 
     private String address;
     private int port;
@@ -55,8 +56,6 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
     private void lock() {
         wakeLock.acquire(WAKE_LOCK_TIMEOUT);
     }
-
-    private Date noSendTimeLimit;
 
     private void unlock() {
         if (wakeLock.isHeld()) {
@@ -216,6 +215,18 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
         });
     }
 
+    private void retry() {
+        Log.d(TAG, "retry()");
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isOnline) {
+                    read();
+                }
+            }
+        }, RETRY_DELAY);
+    }
+
     private void sendSms(final Position position) {
         log("sendSms()", position);
         lock();
@@ -233,18 +244,6 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
                 }
             });
         }
-    }
-
-    private void retry() {
-        Log.d(TAG, "retry()");
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (isOnline) {
-                    read();
-                }
-            }
-        }, RETRY_DELAY);
     }
 
     public void smsReadLatestPosition() {

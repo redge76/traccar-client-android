@@ -22,10 +22,10 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Date;
+import android.util.Log;
+import java.util.ArrayList;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -117,6 +117,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }.execute();
     }
 
+    public Position selectPosition(boolean all, int number) {
+        ArrayList<Position> positions = selectPositions(all, number);
+        if (positions.size() > 0) {
+            return positions.get(0);
+        } else {
+            return null;
+        }
+    }
+
     public ArrayList<Position> selectPositions(boolean all, int number) {
         Cursor cursor;
         ArrayList<Position> positions = new ArrayList<Position>();
@@ -128,7 +137,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         try {
             if (cursor.getCount() > 0) {
+
                 while (cursor.moveToNext()) {
+
                     Position position = new Position();
                     position.setId(cursor.getLong(cursor.getColumnIndex("id")));
                     position.setDeviceId(cursor.getString(cursor.getColumnIndex("deviceId")));
@@ -146,15 +157,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             cursor.close();
         }
         return positions;
-    }
-
-    public Position selectPosition(boolean all, int number) {
-        ArrayList<Position> positions = selectPositions(all, number);
-        if (positions.size() > 0) {
-            return positions.get(0);
-        } else {
-            return null;
-        }
     }
 
     public void selectLatestPositionAsync(DatabaseHandler<Position> handler) {

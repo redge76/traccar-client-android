@@ -37,7 +37,7 @@ public class TrackingService extends Service {
     @SuppressWarnings("deprecation")
     @Override
     public void onCreate() {
-        Log.i(TAG, "onCreate(): service create*****************");
+        Log.i(TAG, "onCreate(): service create");
         StatusActivity.addMessage(getString(R.string.status_service_create));
 
         trackingController = new TrackingController(this);

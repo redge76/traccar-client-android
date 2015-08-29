@@ -37,13 +37,13 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
     private static final String TAG = MainActivity.class.getSimpleName();
 
     public static final String KEY_DEVICE = "id";
-    public static final String KEY_HTTP_BACKEND_STATUS = "http_backend_status";
     public static final String KEY_ADDRESS = "address";
     public static final String KEY_PORT = "port";
     public static final String KEY_INTERVAL = "interval";
     public static final String KEY_PROVIDER = "provider";
     public static final String KEY_STATUS = "status";
     public static final String KEY_FOREGROUND = "foreground";
+    public static final String KEY_HTTP_BACKEND_STATUS = "http_backend_status";
     public static final String KEY_SMS_BACKEND_STATUS = "sms_backend_status";
     public static final String KEY_SMS_BACKEND_NO_SEND_TIME_LIMIT = "sms_backend_no_send_time_limit";
     public static final String KEY_SMS_BACKEND_NUMBER = "sms_backend_number";
@@ -145,7 +145,6 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         if (!sharedPreferences.contains(KEY_DEVICE)) {
             sharedPreferences.edit().putString(KEY_DEVICE, id).commit();
         }
-
         updateSummary(sharedPreferences, KEY_DEVICE);
         updateSummary(sharedPreferences, KEY_ADDRESS);
         updateSummary(sharedPreferences, KEY_PORT);
@@ -153,7 +152,6 @@ public class MainActivity extends PreferenceActivity implements OnSharedPreferen
         updateSummary(sharedPreferences, KEY_PROVIDER);
         updateSummary(sharedPreferences, KEY_SMS_BACKEND_NUMBER);
         updateSummary(sharedPreferences, KEY_SMS_BACKEND_NO_SEND_TIME_LIMIT);
-
     }
 
     // TEMPORARY PORT CHANGE DIALOG (DELME)
