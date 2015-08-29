@@ -40,7 +40,9 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
 
     private Context context;
     private Handler handler;
-    private SharedPreferences preferences;
+
+    private String address;
+    private int port;
 
     private PositionProvider positionProvider;
     private DatabaseHelper databaseHelper;
@@ -63,7 +65,7 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
     public TrackingController(Context context) {
         this.context = context;
         handler = new Handler();
-        preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         if (preferences.getString(MainActivity.KEY_PROVIDER, null).equals("mixed")) {
             positionProvider = new MixedPositionProvider(context, this);
         } else {
@@ -73,6 +75,9 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
         networkManager = new NetworkManager(context, this);
         isOnline = networkManager.isOnline();
         noSendTimeLimit = new Date();
+
+        address = preferences.getString(MainActivity.KEY_ADDRESS, null);
+        port = Integer.parseInt(preferences.getString(MainActivity.KEY_PORT, null));
 
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
@@ -94,14 +99,15 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
 
     @Override
     public void onPositionUpdate(Position position) {
+        StatusActivity.addMessage(context.getString(R.string.status_location_update));
         if (position != null) {
-            StatusActivity.addMessage(context.getString(R.string.status_location_update));
             write(position);
         }
     }
 
     @Override
     public void onNetworkUpdate(boolean isOnline) {
+        StatusActivity.addMessage(context.getString(R.string.status_connectivity_change));
         if (!this.isOnline && isOnline) {
             read();
         }
@@ -189,10 +195,7 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
     private void send(final Position position) {
         log("send", position);
         lock();
-        String request = ProtocolFormatter.formatRequest(
-                preferences.getString(MainActivity.KEY_ADDRESS, null),
-                Integer.parseInt(preferences.getString(MainActivity.KEY_PORT, null)),
-                position);
+        String request = ProtocolFormatter.formatRequest(address, port, position);
         RequestManager.sendRequestAsync(request, new RequestManager.RequestHandler() {
             @Override
             public void onComplete(boolean success) {
@@ -202,6 +205,7 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
                     noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_BACKEND_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
 
                 } else {
+                    StatusActivity.addMessage(context.getString(R.string.status_send_fail));
                     Log.e(TAG, "Send(): Error while sending position");
                     retry();
                 }
