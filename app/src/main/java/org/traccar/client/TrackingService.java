@@ -42,7 +42,6 @@ public class TrackingService extends Service {
 
         trackingController = new TrackingController(this);
         trackingController.start();
-        trackingController.scheduleAlarm();
 
         foreground = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(MainActivity.KEY_FOREGROUND, false);
 

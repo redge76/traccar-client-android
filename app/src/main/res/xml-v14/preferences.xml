@@ -62,6 +62,19 @@
             android:numeric="integer"
             android:summary="@string/settings_interval_summary"
             android:title="@string/settings_interval_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="http_backend_exact_time"
+            android:summary="@string/settings_http_backend_exact_time_summary"
+            android:title="@string/settings_http_backend_exact_time_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="http_backend_only_wifi"
+            android:summary="@string/settings_http_backend_only_wifi_summary"
+            android:title="@string/settings_http_backend_only_wifi_title" />
+
     </PreferenceCategory>
 
 
@@ -100,7 +113,41 @@
                 android:numeric="integer"
                 android:summary="@string/settings_sms_backend_interval_summary"
                 android:title="@string/settings_sms_backend_interval_title" />
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="sms_backend_exact_time"
+                android:summary="@string/settings_sms_backend_exact_time_summary"
+                android:title="@string/settings_sms_backend_exact_time_title" />
+
+            <CheckBoxPreference
+                android:defaultValue="true"
+                android:key="sms_backend_play_sound"
+                android:summary="@string/settings_sms_backend_play_sound_summary"
+                android:title="@string/settings_sms_backend_play_sound_title" />
+
+
         </PreferenceCategory>
+
+        <PreferenceCategory
+            android:key="pref_cat_sms_sos"
+            android:title="@string/pref_cat_sos_sms">
+
+            <EditTextPreference
+                android:defaultValue=""
+                android:key="sms_sos_numbers"
+                android:numeric="integer"
+                android:summary="@string/settings_sms_sos_numbers_summary"
+                android:title="@string/settings_sms_sos_numbers_title" />
+
+            <EditTextPreference
+                android:defaultValue="SOS. please Help"
+                android:key="sms_sos_text"
+                android:numeric="integer"
+                android:summary="@string/settings_sms_sos_text_summary"
+                android:title="@string/settings_sms_sos_text_title" />
+
+            </PreferenceCategory>
     </PreferenceScreen>
 
 </PreferenceScreen>

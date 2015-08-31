@@ -20,6 +20,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -27,9 +28,10 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.Date;
-import java.util.GregorianCalendar;
 
-public class TrackingController extends BroadcastReceiver implements PositionProvider.PositionListener, NetworkManager.NetworkHandler {
+public class TrackingController implements PositionProvider.PositionListener, NetworkManager.NetworkHandler {
+
+    public static final String CUSTOM_INTENT = "org.traccar.client.TEST";
 
     private static final String TAG = TrackingController.class.getSimpleName();
     private static final int RETRY_DELAY = 30 * 1000;
@@ -75,21 +77,24 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
         databaseHelper = new DatabaseHelper(context);
         networkManager = new NetworkManager(context, this);
         isOnline = networkManager.isOnline();
-        noSendTimeLimit = new Date();
 
         address = preferences.getString(MainActivity.KEY_ADDRESS, null);
         port = Integer.parseInt(preferences.getString(MainActivity.KEY_PORT, null));
 
         PowerManager powerManager = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, getClass().getName());
+
+
     }
 
     public void start() {
         if (isOnline) {
-            read();
+            //read();
         }
         positionProvider.startUpdates();
         networkManager.start();
+        noSendTimeLimit = new Date();
+        setAlarms();
     }
 
     public void stop() {
@@ -110,7 +115,7 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
     public void onNetworkUpdate(boolean isOnline) {
         StatusActivity.addMessage(context.getString(R.string.status_connectivity_change));
         if (!this.isOnline && isOnline) {
-            read();
+            //         read();
         }
         this.isOnline = isOnline;
     }
@@ -143,7 +148,7 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
                 if (success) {
                     Log.d(TAG, "write(): Position inserted");
                     if (isOnline && isWaiting) {
-                        read();
+                        //read();
                         isWaiting = false;
                     }
                 } else {
@@ -184,7 +189,7 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
             @Override
             public void onComplete(boolean success, Void result) {
                 if (success) {
-                    read();
+                    //read();
                 } else {
                     retry();
                 }
@@ -204,7 +209,6 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
                     Log.d(TAG, "send(): Position sucessfully sent");
                     delete(position);
                     noSendTimeLimit.setTime(position.getTime().getTime() + Integer.parseInt(preferences.getString(MainActivity.KEY_SMS_BACKEND_NO_SEND_TIME_LIMIT, null)) * 60 * 1000);
-
                 } else {
                     StatusActivity.addMessage(context.getString(R.string.status_send_fail));
                     Log.e(TAG, "Send(): Error while sending position");
@@ -281,32 +285,32 @@ public class TrackingController extends BroadcastReceiver implements PositionPro
         );
     }
 
-    public void scheduleAlarm() {
-        Log.e(TAG, "SCHEDULLLING ALARM ***********");
-        Long time = new GregorianCalendar().getTimeInMillis() + 10*1000;
+
+    private final BroadcastReceiver alarmReceived = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(TrackingController.CUSTOM_INTENT)) {
+                Log.e(TAG, "**********   ALARM CUSTOM  ********   ");
+            }
+        }
+    };
+
+    public void setAlarms() {
+        Log.e(TAG, "setAlarm(): adding all alarms   ");
+        long wakeupTime = System.currentTimeMillis() + 5000;
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(TrackingController.CUSTOM_INTENT);
+        context.registerReceiver(alarmReceived, filter);
+
+        Intent myIntent = new Intent(TrackingController.CUSTOM_INTENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intentAlarm = new Intent(context, this.getClass());
-        alarmManager.set(AlarmManager.RTC_WAKEUP, time, PendingIntent.getBroadcast(context, 1, intentAlarm, PendingIntent.FLAG_UPDATE_CURRENT));
-
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, wakeupTime, 300000, pendingIntent);
     }
 
-    private void loopSMS() {
-        log("loopSMS()", null);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //sendLatestPositionbySms();
-                Log.e(TAG, "************** SENDING SMS*****************");
-                Log.d(TAG, "loopSMS(): sending SMS from loop && rescheduling");
-                handler.postDelayed(this, preferences.getInt(MainActivity.KEY_SMS_BACKEND_INTERVAL, 0));
-            }
-        }, preferences.getInt(MainActivity.KEY_SMS_BACKEND_INTERVAL, 0));
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        Log.e(TAG, "ALALLLLLLLLLLLLLLLLLLLLLLRRRRRRRRRRMMMMMMMM");
-    }
 }
+
 
