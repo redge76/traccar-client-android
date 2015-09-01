@@ -27,11 +27,14 @@ import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class TrackingController implements PositionProvider.PositionListener, NetworkManager.NetworkHandler {
 
-    public static final String CUSTOM_INTENT = "org.traccar.client.TEST";
+    public static final String ALARM_INTENT_HTTP = "org.traccar.client.HTTP";
+    public static final String ALARM_INTENT_SMS = "org.traccar.client.SMS";
+
 
     private static final String TAG = TrackingController.class.getSimpleName();
     private static final int RETRY_DELAY = 30 * 1000;
@@ -54,6 +57,9 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
     private NetworkManager networkManager;
 
     private PowerManager.WakeLock wakeLock;
+    4
+
+    ArrayList<Position> positionCache;
 
     private void lock() {
         wakeLock.acquire(WAKE_LOCK_TIMEOUT);
@@ -141,7 +147,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
 
     private void write(Position position) {
         log("write", position);
-        lock();
+//        lock();
         databaseHelper.insertPositionAsync(position, new DatabaseHelper.DatabaseHandler<Void>() {
             @Override
             public void onComplete(boolean success, Void result) {
@@ -154,14 +160,14 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                 } else {
                     Log.d(TAG, "write(): Failed position insertion");
                 }
-                unlock();
+//                unlock();
             }
         });
     }
 
     private void read() {
         log("read():", null);
-        lock();
+//        lock();
         databaseHelper.selectPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
             @Override
             public void onComplete(boolean success, Position result) {
@@ -177,7 +183,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                     Log.d(TAG, "read(): Retrying the selection");
                     retry();
                 }
-                unlock();
+//                unlock();
             }
         });
     }
@@ -200,7 +206,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
 
     private void send(final Position position) {
         log("send", position);
-        lock();
+//        lock();
         String request = ProtocolFormatter.formatRequest(address, port, position);
         RequestManager.sendRequestAsync(request, new RequestManager.RequestHandler() {
             @Override
@@ -214,7 +220,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                     Log.e(TAG, "Send(): Error while sending position");
                     retry();
                 }
-                unlock();
+//                unlock();
             }
         });
     }
@@ -233,7 +239,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
 
     private void sendSms(final Position position) {
         log("sendSms()", position);
-        lock();
+
         if (position.getTime().after(noSendTimeLimit) && preferences.getBoolean(MainActivity.KEY_SMS_BACKEND_STATUS, false)) {
             SmsRequestManager.sendRequestAsync(context, "0796281978", "test timeout", new SmsRequestManager.RequestHandler() {
                 @Override
@@ -244,32 +250,47 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                         StatusActivity.addMessage(context.getString(R.string.status_send_fail));
                         retry();
                     }
-                    unlock();
                 }
             });
         }
     }
 
-    public void smsReadLatestPosition() {
+
+    public void ReadLatestPositions() {
         Log.d(TAG, "smsReadLatestPosition()");
         Position result;
-        lock();
         databaseHelper.selectLatestPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
             public void onComplete(boolean success, Position result) {
                 if (success) {
                     Log.d(TAG, "smsReadLatestPosition(): position selected");
                     if (result != null) {
-                        sendLatestPositionbySms(result);
+                        sendLatestPositionBySms(result);
                     }
                 } else {
                     Log.e(TAG, "smsReadLatestPosition(): Position selection failed");
                 }
-                unlock();
             }
         });
     }
 
-    public void sendLatestPositionbySms(Position position) {
+    public void smsReadLatestPosition() {
+        Log.d(TAG, "smsReadLatestPosition()");
+        Position result;
+        databaseHelper.selectLatestPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
+            public void onComplete(boolean success, Position result) {
+                if (success) {
+                    Log.d(TAG, "smsReadLatestPosition(): position selected");
+                    if (result != null) {
+                        sendLatestPositionBySms(result);
+                    }
+                } else {
+                    Log.e(TAG, "smsReadLatestPosition(): Position selection failed");
+                }
+            }
+        });
+    }
+
+    public void sendLatestPositionBySms(Position position) {
         String message = SmsProtocolFormatter.formatRequest(position);
         SmsRequestManager.sendRequestAsync(context, preferences.getString(MainActivity.KEY_SMS_BACKEND_NUMBER, null), message, new SmsRequestManager.RequestHandler() {
                     @Override
@@ -281,18 +302,35 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
                         }
                     }
                 }
-
         );
     }
 
-
-    private final BroadcastReceiver alarmReceived = new BroadcastReceiver() {
+    private final BroadcastReceiver alarmReceiverHttp = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(TrackingController.CUSTOM_INTENT)) {
-                Log.e(TAG, "**********   ALARM CUSTOM  ********   ");
+            String action = intent.getAction();
+            Log.e(TAG, "onReceive(): Alarm HTTP ");
+            if (isOnline) {
+                if (positionCache.isEmpty() || hasNewPosition) positionCache = ReadLatestPositions();
+                success = sendPositionByHttp(positionCache);
+                if (sucess) {
+                    StatusActivity.addMessage(context.getString(R.string.status_send_sucess));
+                    hasNewPosition = false;
+                } else {
+                    StatusActivity.addMessage(context.getString(R.string.status_send_fail));
+                    setRetryAlarm();
+
+                }
             }
+        }
+    };
+
+    private final BroadcastReceiver alarmReceiverSms = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.e(TAG, "onReceive(): Alarm SMS");
         }
     };
 
@@ -300,17 +338,47 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         Log.e(TAG, "setAlarm(): adding all alarms   ");
         long wakeupTime = System.currentTimeMillis() + 5000;
 
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(TrackingController.CUSTOM_INTENT);
-        context.registerReceiver(alarmReceived, filter);
+        IntentFilter filterHttp = new IntentFilter();
+        filterHttp.addAction(TrackingController.ALARM_INTENT_HTTP);
+        context.registerReceiver(alarmReceiverHttp, filterHttp);
 
-        Intent myIntent = new Intent(TrackingController.CUSTOM_INTENT);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, 0);
+        IntentFilter filterSms = new IntentFilter();
+        filterSms.addAction(TrackingController.ALARM_INTENT_SMS);
+        context.registerReceiver(alarmReceiverSms, filterSms);
+
+        Intent myIntentHttp = new Intent(TrackingController.ALARM_INTENT_HTTP);
+        PendingIntent pendingIntentHttp = PendingIntent.getBroadcast(context, 0, myIntentHttp, 0);
+
+        Intent myIntentSms = new Intent(TrackingController.ALARM_INTENT_SMS);
+        PendingIntent pendingIntentSms = PendingIntent.getBroadcast(context, 0, myIntentSms, 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, wakeupTime, 300000, pendingIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, wakeupTime, 300000, pendingIntentHttp);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, wakeupTime, 300000, pendingIntentSms);
     }
 
+    public void cancelAlarms() {
+        Log.e(TAG, "cancelAlarms(): deleting all alarms   ");
+
+        IntentFilter filterHttp = new IntentFilter();
+        filterHttp.addAction(TrackingController.ALARM_INTENT_HTTP);
+        context.registerReceiver(alarmReceiverHttp, filterHttp);
+
+        IntentFilter filterSms = new IntentFilter();
+        filterSms.addAction(TrackingController.ALARM_INTENT_SMS);
+        context.registerReceiver(alarmReceiverSms, filterSms);
+
+        Intent myIntentHttp = new Intent(TrackingController.ALARM_INTENT_HTTP);
+        PendingIntent pendingIntentHttp = PendingIntent.getBroadcast(context, 0, myIntentHttp, 0);
+
+        Intent myIntentSms = new Intent(TrackingController.ALARM_INTENT_SMS);
+        PendingIntent pendingIntentSms = PendingIntent.getBroadcast(context, 0, myIntentSms, 0);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntentHttp);
+        alarmManager.cancel(pendingIntentSms);
+
+    }
 }
 
 
