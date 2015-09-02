@@ -256,15 +256,15 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
     }
 
 
-    public void ReadLatestPositions() {
-        Log.d(TAG, "smsReadLatestPosition()");
-        Position result;
-        databaseHelper.selectLatestPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
+    public void readLatestPositions(type) {
+        Log.d(TAG, "readLatestPositions()");
+        final Position returnResult;
+        databaseHelper.selectPositionsAsync(new DatabaseHelper.DatabaseHandler<ArrayList<Position>>() {
             public void onComplete(boolean success, Position result) {
                 if (success) {
                     Log.d(TAG, "smsReadLatestPosition(): position selected");
                     if (result != null) {
-                        sendLatestPositionBySms(result);
+                        returnResult = result;
                     }
                 } else {
                     Log.e(TAG, "smsReadLatestPosition(): Position selection failed");
@@ -273,22 +273,6 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
         });
     }
 
-    public void smsReadLatestPosition() {
-        Log.d(TAG, "smsReadLatestPosition()");
-        Position result;
-        databaseHelper.selectLatestPositionAsync(new DatabaseHelper.DatabaseHandler<Position>() {
-            public void onComplete(boolean success, Position result) {
-                if (success) {
-                    Log.d(TAG, "smsReadLatestPosition(): position selected");
-                    if (result != null) {
-                        sendLatestPositionBySms(result);
-                    }
-                } else {
-                    Log.e(TAG, "smsReadLatestPosition(): Position selection failed");
-                }
-            }
-        });
-    }
 
     public void sendLatestPositionBySms(Position position) {
         String message = SmsProtocolFormatter.formatRequest(position);
@@ -312,7 +296,7 @@ public class TrackingController implements PositionProvider.PositionListener, Ne
             String action = intent.getAction();
             Log.e(TAG, "onReceive(): Alarm HTTP ");
             if (isOnline) {
-                if (positionCache.isEmpty() || hasNewPosition) positionCache = ReadLatestPositions();
+                if (positionCache.isEmpty() || hasNewPosition) positionCache = ReadLatestPositions("SMS");
                 success = sendPositionByHttp(positionCache);
                 if (sucess) {
                     StatusActivity.addMessage(context.getString(R.string.status_send_sucess));

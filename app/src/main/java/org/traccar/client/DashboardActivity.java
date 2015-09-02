@@ -14,6 +14,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+//TODO: Limit SMS rate
+//TODO: Limit SMS roaming
+//TODO: Add way to schedule service shutdown.
+//TODO: modify update freq when moving
+//TODO: no Update if distance less than
+//TODO: add option for arplane mode
+
+
 
 public class DashboardActivity extends Activity {
 
